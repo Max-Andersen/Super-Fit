@@ -20,6 +20,8 @@ import com.example.superfitcompose.ui.auth.AuthIntent.UserNameInput
 class LoginViewModel : ViewModel(), IntentHandler<AuthIntent> {
     private val _authScreenState = MutableLiveData<AuthViewState>()
 
+    private var password = ""
+
     fun getScreenState(): LiveData<AuthViewState> = _authScreenState
 
     init {
@@ -36,14 +38,41 @@ class LoginViewModel : ViewModel(), IntentHandler<AuthIntent> {
             is EnterCodeButtonClicked -> {
                 _authScreenState.value = _authScreenState.value!!.copy(enterUserName = false, enterPassword = true)
             }
-            is SignUpNavigationButtonClicked -> {}
-            is CodeNumberInput -> {}
-            is RegisterUserNameInput -> {}
-            is RegisterEmailInput -> {}
-            is RegisterCodeInput -> {}
-            is RegisterCodeConfirmationInput -> {}
-            is SignUpButtonClicked -> {}
-            is SignInNavigationButtonClicked -> {}
+
+            is SignUpNavigationButtonClicked -> {
+
+            }
+
+            is CodeNumberInput -> {
+                password += intent.number
+                if (password.length == 4){
+                    // Todo server request
+                }
+            }
+
+            is RegisterUserNameInput -> {
+
+            }
+
+            is RegisterEmailInput -> {
+
+            }
+
+            is RegisterCodeInput -> {
+
+            }
+
+            is RegisterCodeConfirmationInput -> {
+
+            }
+
+            is SignUpButtonClicked -> {
+
+            }
+
+            is SignInNavigationButtonClicked -> {
+
+            }
         }
     }
 

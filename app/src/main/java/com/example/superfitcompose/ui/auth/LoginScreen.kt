@@ -1,8 +1,11 @@
 package com.example.superfitcompose.ui.auth
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -62,11 +71,15 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
     if (viewState.enterUserName) {
         EnterUsernameScreen(
             text = viewState.login,
-            sendIntent = viewModel::processIntent )
+            sendIntent = viewModel::processIntent
+        )
     }
 
     if (viewState.enterPassword) {
-
+        EnterPasswordScreen(
+            text = viewState.login,
+            sendIntent = viewModel::processIntent
+        )
     }
 
     if (viewState.register) {
@@ -159,6 +172,55 @@ fun EnterUsernameScreen(text: String, sendIntent: (AuthIntent) -> Unit) {
         Spacer(modifier = Modifier.size(8.dp))
         Image(painter = painterResource(id = R.drawable.right), contentDescription = null)
     }
+}
+
+@Composable
+fun EnterPasswordScreen(text: String, sendIntent: (AuthIntent) -> Unit) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier
+            .padding(start = 104.dp, end = 104.dp, top = 244.dp)
+            .wrapContentWidth()
+    )
+
+    val data = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(21.dp),
+        horizontalArrangement = Arrangement.spacedBy(25.dp),
+        modifier = Modifier
+            .padding(start = 38.dp, end = 38.dp, bottom = 107.dp)
+            .wrapContentHeight(Alignment.Bottom)
+            .wrapContentWidth()
+    ) {
+        items(data) { item ->
+            Card(
+                modifier = Modifier,
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                border = BorderStroke(2.dp, Color.White)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { sendIntent(AuthIntent.CodeNumberInput(item)) },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = item,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+
+            }
+
+
+        }
+    }
+
+
 }
 
 

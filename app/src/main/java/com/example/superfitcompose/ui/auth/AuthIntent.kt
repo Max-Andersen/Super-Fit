@@ -6,7 +6,7 @@ sealed class AuthIntent {
     object SignUpNavigationButtonClicked : AuthIntent()
 
 
-    data class CodeNumberInput(val number: Int): AuthIntent()
+    data class CodeNumberInput(val number: String): AuthIntent()
 
 
     data class RegisterUserNameInput(val userName: String): AuthIntent()
