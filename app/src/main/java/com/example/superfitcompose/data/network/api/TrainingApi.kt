@@ -9,8 +9,8 @@ import retrofit2.http.POST
 interface TrainingApi {
 
     @GET("trainings")
-    fun GetTrainings(): Response<List<TrainingDTO>>
+    suspend fun getTrainings(): Response<List<TrainingDTO>>
 
     @POST("trainings")
-    fun SaveTraining(@Body body: TrainingDTO): Response<TrainingDTO>
+    suspend fun saveTraining(@Body body: TrainingDTO): Response<TrainingDTO>
 }

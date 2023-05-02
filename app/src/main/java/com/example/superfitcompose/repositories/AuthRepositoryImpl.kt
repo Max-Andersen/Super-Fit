@@ -10,10 +10,10 @@ class AuthRepositoryImpl: AuthRepository, BaseRepository() {
 
     private val authApi: AuthApi = Network.getAuthApi()
 
-    override fun GetRefreshToken(data: AuthCredentialDTO) = apiRequestFlow { authApi.GetRefreshToken(data) }
+    override fun GetRefreshToken(data: AuthCredentialDTO) = apiRequestFlow { authApi.getRefreshToken(data) }
 
-    override fun GetAccessToken(data: RefreshTokenDTO) = apiRequestFlow { authApi.GetAccessToken(data) }
+    override fun GetAccessToken(data: RefreshTokenDTO) = apiRequestFlow { authApi.getAccessToken(data) }
 
-    override fun Register(data: AuthCredentialDTO) = apiRequestFlow { authApi.Register(data) }
+    override fun Register(data: AuthCredentialDTO) = apiRequestFlow { authApi.register(data) }
 
 }

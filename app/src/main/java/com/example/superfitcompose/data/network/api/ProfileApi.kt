@@ -16,26 +16,26 @@ import retrofit2.http.Path
 interface ProfileApi {
 
     @GET("profile")
-    fun GetProfile(): Response<LoginDTO>
+    suspend fun getProfile(): Response<LoginDTO>
 
     @POST("profile/params")
-    fun UpdateBodyParams(@Body body: BodyParametersDTO): Response<SimpleMessageDTO>
+    suspend fun updateBodyParams(@Body body: BodyParametersDTO): Response<SimpleMessageDTO>
 
     @GET("profile/params/history")
-    fun GetBodyHistory(): Response<List<BodyParametersDTO>>
+    suspend fun getBodyHistory(): Response<List<BodyParametersDTO>>
 
     @GET("profile/photos")
-    fun GetBodyPhotoIds(): Response<List<PhotoIdDTO>>
+    suspend fun getBodyPhotoIds(): Response<List<PhotoIdDTO>>
 
     @Multipart
     @GET("profile/photos")
-    fun UploadBodyPhoto(@Part image: MultipartBody.Part): Response<PhotoIdDTO>
+    suspend fun uploadBodyPhoto(@Part image: MultipartBody.Part): Response<PhotoIdDTO>
 
     @Multipart
     @GET("profile/photos/{id}")
-    fun DownloadBodyPhoto(@Path("id") id : String): Response<MultipartBody.Part>
+    suspend fun downloadBodyPhoto(@Path("id") id : String): Response<MultipartBody.Part>
 
     @GET("profile/photos/{id}")
-    fun RemoveBodyPhoto(@Path("id") id : String): Response<SimpleMessageDTO>
+    suspend fun removeBodyPhoto(@Path("id") id : String): Response<SimpleMessageDTO>
 
 }

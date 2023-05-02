@@ -12,11 +12,11 @@ import retrofit2.http.POST
 interface AuthApi {
 
     @POST("auth/token")
-    fun GetRefreshToken(@Body body: AuthCredentialDTO): Response<AuthResponseDTO>
+    suspend fun getRefreshToken(@Body body: AuthCredentialDTO): Response<AuthResponseDTO>
 
     @POST("auth/token/refresh")
-    fun GetAccessToken(@Body body: RefreshTokenDTO): Response<AccessTokenDTO>
+    suspend fun getAccessToken(@Body body: RefreshTokenDTO): Response<AccessTokenDTO>
 
     @POST("auth/register")
-    fun Register(@Body body: AuthCredentialDTO): Response<SimpleMessageDTO>
+    suspend fun register(@Body body: AuthCredentialDTO): Response<SimpleMessageDTO>
 }
