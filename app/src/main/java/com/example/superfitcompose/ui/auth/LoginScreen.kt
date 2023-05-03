@@ -1,11 +1,14 @@
 package com.example.superfitcompose.ui.auth
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Card
@@ -29,9 +29,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,10 +45,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.superfitcompose.R
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
+import com.skydoves.orbital.Orbital
+import com.skydoves.orbital.OrbitalScope
+import com.skydoves.orbital.animateSharedElementTransition
+import com.skydoves.orbital.rememberContentWithOrbitalScope
 
 @Composable
 fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
@@ -184,43 +193,183 @@ fun EnterPasswordScreen(text: String, sendIntent: (AuthIntent) -> Unit) {
             .wrapContentWidth()
     )
 
-    val data = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
+    var data = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(21.dp),
-        horizontalArrangement = Arrangement.spacedBy(25.dp),
-        modifier = Modifier
-            .padding(start = 38.dp, end = 38.dp, bottom = 107.dp)
-            .wrapContentHeight(Alignment.Bottom)
-            .wrapContentWidth()
-    ) {
-        items(data) { item ->
-            Card(
-                modifier = Modifier,
-                shape = RoundedCornerShape(10.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                border = BorderStroke(2.dp, Color.White)
+
+    val movementSpec = SpringSpec<IntOffset>(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = 200f
+    )
+
+    val transformationSpec = SpringSpec<IntSize>(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = 200f
+    )
+
+    val isTransformed = rememberSaveable { mutableStateOf(false) }
+
+    val items = rememberContentWithOrbitalScope {
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .wrapContentHeight(Alignment.Bottom),
+            verticalArrangement = Arrangement.spacedBy(21.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable { sendIntent(AuthIntent.CodeNumberInput(item)) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = item,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-
+                GetCodeCard(
+                    item = data[0],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[1],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[2],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
             }
-
-
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                GetCodeCard(
+                    item = data[3],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[4],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[5],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                GetCodeCard(
+                    item = data[6],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[7],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+                GetCodeCard(
+                    item = data[8],
+                    sendIntent = sendIntent,
+                    isTransformed = isTransformed,
+                    movementSpec = movementSpec,
+                    transformationSpec = transformationSpec,
+                    orbitalScope = this@rememberContentWithOrbitalScope
+                )
+            }
         }
+
     }
 
+    Orbital(
+        modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp),
+        isTransformed = isTransformed.value,
+        onStartContent = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                items()
+            }
 
+//
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(3),
+//                verticalArrangement = Arrangement.spacedBy(21.dp),
+//                horizontalArrangement = Arrangement.spacedBy(25.dp),
+//                modifier = Modifier
+//
+//            ) {
+//
+//            }
+
+        },
+        onTransformedContent = {
+            data = data.shuffled()
+            Box(modifier = Modifier.fillMaxSize()) {
+                items()
+            }
+        }
+    )
+
+}
+
+@Composable
+fun GetCodeCard(
+    item: String,
+    sendIntent: (AuthIntent) -> Unit,
+    isTransformed: MutableState<Boolean>,
+    movementSpec: SpringSpec<IntOffset>,
+    transformationSpec: SpringSpec<IntSize>,
+    orbitalScope: OrbitalScope
+) {
+    Card(
+        modifier = Modifier
+            .clickable {
+                sendIntent(AuthIntent.CodeNumberInput(item))
+                isTransformed.value = !isTransformed.value
+            }
+            .size(78.dp)
+            .animateSharedElementTransition(orbitalScope, movementSpec, transformationSpec),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        border = BorderStroke(2.dp, Color.White)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = item,
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+
+    }
 }
 
 
