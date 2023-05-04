@@ -3,14 +3,17 @@ package com.example.superfitcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.superfitcompose.ui.auth.LoginScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.superfitcompose.ui.Routes
+import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
+import com.example.superfitcompose.ui.auth.login.LoginScreen
+import com.example.superfitcompose.ui.auth.register.RegisterScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,13 +21,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SuperFitComposeTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    LoginScreen()
+
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = Routes.LOGIN) {
+                    composable(Routes.LOGIN) { LoginScreen(navController = navController) }
+                    composable(Routes.ENTER_PASSWORD + "/{email}") { navBackStack ->
+                        val enteredEmail = navBackStack.arguments?.getString("email")!!
+                        EnterCodeScreen(email = enteredEmail, navController = navController)
+                    }
+                    composable(Routes.REGISTER) { RegisterScreen(navController = navController) }
                 }
+
             }
         }
     }

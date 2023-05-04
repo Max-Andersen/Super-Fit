@@ -1,4 +1,4 @@
-package com.example.superfitcompose.ui.auth
+package com.example.superfitcompose.domain.usecases
 
 class ValidationUseCase(private val email: String) {
     private fun String.isEmailValid(): Boolean {
