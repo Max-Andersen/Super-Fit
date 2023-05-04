@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrainingRepository {
 
-    fun GetTrainings(): Flow<ApiResponse<List<TrainingDTO>>>
+    fun getTrainings(): Flow<ApiResponse<List<TrainingDTO>>>
 
-    fun SaveTraining(training: TrainingDTO): Flow<ApiResponse<TrainingDTO>>
+    fun saveTraining(training: TrainingDTO): Flow<ApiResponse<TrainingDTO>>
 
 }

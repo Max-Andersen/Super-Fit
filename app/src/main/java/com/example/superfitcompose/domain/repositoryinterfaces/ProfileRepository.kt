@@ -10,18 +10,18 @@ import okhttp3.MultipartBody
 
 interface ProfileRepository {
 
-    fun GetProfileLogin(): Flow<ApiResponse<LoginDTO>>
+    fun getProfileLogin(): Flow<ApiResponse<LoginDTO>>
 
-    fun UpdateBodyParams(newParams: BodyParametersDTO): Flow<ApiResponse<SimpleMessageDTO>>
+    fun updateBodyParams(newParams: BodyParametersDTO): Flow<ApiResponse<SimpleMessageDTO>>
 
-    fun GetBodyHistory(): Flow<ApiResponse<List<BodyParametersDTO>>>
+    fun getBodyHistory(): Flow<ApiResponse<List<BodyParametersDTO>>>
 
-    fun GetBodyPhotoIds(): Flow<ApiResponse<List<PhotoIdDTO>>>
+    fun getBodyPhotoIds(): Flow<ApiResponse<List<PhotoIdDTO>>>
 
-    fun UploadBodyPhoto(image: MultipartBody.Part): Flow<ApiResponse<PhotoIdDTO>>
+    fun uploadBodyPhoto(image: MultipartBody.Part): Flow<ApiResponse<PhotoIdDTO>>
 
-    fun DownloadBodyPhoto(id : String): Flow<ApiResponse<MultipartBody.Part>>
+    fun downloadBodyPhoto(id : String): Flow<ApiResponse<MultipartBody.Part>>
 
-    fun RemoveBodyPhoto(id : String): Flow<ApiResponse<SimpleMessageDTO>>
+    fun removeBodyPhoto(id : String): Flow<ApiResponse<SimpleMessageDTO>>
 
 }

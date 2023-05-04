@@ -8,8 +8,8 @@ import com.example.superfitcompose.domain.repositoryinterfaces.TrainingRepositor
 class TrainingRepositoryImpl: TrainingRepository, BaseRepository() {
     private val trainingApi: TrainingApi = Network.getTrainingApi()
 
-    override fun GetTrainings() = apiRequestFlow { trainingApi.getTrainings() }
+    override fun getTrainings() = apiRequestFlow { trainingApi.getTrainings() }
 
-    override fun SaveTraining(training: TrainingDTO) = apiRequestFlow { trainingApi.saveTraining(training) }
+    override fun saveTraining(training: TrainingDTO) = apiRequestFlow { trainingApi.saveTraining(training) }
 
 }

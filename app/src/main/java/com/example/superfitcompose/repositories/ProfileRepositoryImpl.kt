@@ -9,17 +9,17 @@ import okhttp3.MultipartBody
 class ProfileRepositoryImpl: ProfileRepository, BaseRepository() {
     private val profileApi: ProfileApi = Network.getProfileApi()
 
-    override fun GetProfileLogin() = apiRequestFlow { profileApi.getProfile() }
+    override fun getProfileLogin() = apiRequestFlow { profileApi.getProfile() }
 
-    override fun UpdateBodyParams(newParams: BodyParametersDTO) = apiRequestFlow { profileApi.updateBodyParams(newParams) }
+    override fun updateBodyParams(newParams: BodyParametersDTO) = apiRequestFlow { profileApi.updateBodyParams(newParams) }
 
-    override fun GetBodyHistory() = apiRequestFlow { profileApi.getBodyHistory() }
+    override fun getBodyHistory() = apiRequestFlow { profileApi.getBodyHistory() }
 
-    override fun GetBodyPhotoIds() = apiRequestFlow { profileApi.getBodyPhotoIds() }
+    override fun getBodyPhotoIds() = apiRequestFlow { profileApi.getBodyPhotoIds() }
 
-    override fun UploadBodyPhoto(image: MultipartBody.Part) = apiRequestFlow { profileApi.uploadBodyPhoto(image) }
+    override fun uploadBodyPhoto(image: MultipartBody.Part) = apiRequestFlow { profileApi.uploadBodyPhoto(image) }
 
-    override fun DownloadBodyPhoto(id: String) = apiRequestFlow { profileApi.downloadBodyPhoto(id) }
+    override fun downloadBodyPhoto(id: String) = apiRequestFlow { profileApi.downloadBodyPhoto(id) }
 
-    override fun RemoveBodyPhoto(id: String) = apiRequestFlow { profileApi.removeBodyPhoto(id) }
+    override fun removeBodyPhoto(id: String) = apiRequestFlow { profileApi.removeBodyPhoto(id) }
 }

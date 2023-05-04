@@ -6,6 +6,3 @@ data class PhotoId(
     val id: String,
     val uploaded: Int,
 )
-
-fun PhotoId.fromDomain() = PhotoIdDTO(id, uploaded)
-

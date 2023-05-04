@@ -11,5 +11,5 @@ data class AuthResponseDTO(
     val expired: Int
 )
 
-fun AuthResponseDTO.toDomain() = AuthResponse(username, refreshToken, expired)
+fun AuthResponseDTO.toDomain() = AuthResponse(username)
 

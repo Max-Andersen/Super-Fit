@@ -10,4 +10,4 @@ data class AccessTokenDTO(
     val expired: Int
 )
 
-fun AccessTokenDTO.toDomain() = AccessToken(accessToken, expired)
+fun AccessTokenDTO.toDomain() = AccessToken(accessToken)

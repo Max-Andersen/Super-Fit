@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
 
-    fun GetRefreshToken(data: AuthCredentialDTO): Flow<ApiResponse<AuthResponseDTO>>
+    fun getRefreshToken(data: AuthCredentialDTO): Flow<ApiResponse<AuthResponseDTO>>
 
-    fun GetAccessToken(data: RefreshTokenDTO): Flow<ApiResponse<AccessTokenDTO>>
+    fun getAccessToken(data: RefreshTokenDTO): Flow<ApiResponse<AccessTokenDTO>>
 
-    fun Register(data: AuthCredentialDTO): Flow<ApiResponse<SimpleMessageDTO>>
+    fun register(data: AuthCredentialDTO): Flow<ApiResponse<SimpleMessageDTO>>
 
 }
