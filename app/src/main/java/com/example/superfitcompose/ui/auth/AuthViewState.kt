@@ -11,5 +11,10 @@ data class AuthViewState(
 
     val enterUserName: Boolean = true,
     val enterPassword: Boolean = false,
-    val register: Boolean = false
+    val register: Boolean = false,
+
+
+    val isError: Boolean = false,
+    val errorMessage: String = ""
+
 )

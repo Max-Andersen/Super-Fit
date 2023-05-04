@@ -1,6 +1,9 @@
 package com.example.superfitcompose.ui.auth
 
 sealed class AuthIntent {
+
+
+
     data class UserNameInput(val userName: String): AuthIntent()
     object EnterCodeButtonClicked: AuthIntent()
     object SignUpNavigationButtonClicked : AuthIntent()

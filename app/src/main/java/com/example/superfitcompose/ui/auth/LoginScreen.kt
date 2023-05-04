@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.auth
 
+import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.foundation.BorderStroke
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
@@ -76,6 +78,10 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
 
     val viewState by viewModel.getScreenState().observeAsState(AuthViewState())
 
+    if (viewState.isError) {
+        Toast.makeText(LocalContext.current, viewState.errorMessage, Toast.LENGTH_LONG).show()
+    }
+
 
     if (viewState.enterUserName) {
         EnterUsernameScreen(
@@ -92,11 +98,10 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
     }
 
     if (viewState.register) {
-
+        RegisterScreen(userNameText =  viewState.login, emailText = viewState.email, code = "*".repeat(viewState.code.length), repeatCode = "*".repeat(viewState.repeatCode.length), sendIntent = viewModel::processIntent)
     }
 
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -338,6 +343,57 @@ fun EnterPasswordScreen(text: String, sendIntent: (AuthIntent) -> Unit) {
 }
 
 @Composable
+fun RegisterScreen(userNameText: String, emailText: String, code: String, repeatCode: String, sendIntent: (AuthIntent) -> Unit) {
+    Column(
+        modifier = Modifier.padding(start = 52.dp, end = 52.dp, top = 248.dp),
+        verticalArrangement = Arrangement.spacedBy(37.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        GetRegisterTextField(userNameText, R.string.username) { newUserName -> sendIntent(AuthIntent.RegisterUserNameInput(newUserName)) }
+        GetRegisterTextField(emailText, R.string.email) { newEmail -> sendIntent(AuthIntent.RegisterEmailInput(newEmail)) }
+        GetRegisterTextField(code, R.string.code) { newCode -> sendIntent(AuthIntent.RegisterCodeInput(newCode)) }
+        GetRegisterTextField(repeatCode, R.string.repeat_code) { newCodeConfirmation -> sendIntent(AuthIntent.RegisterCodeConfirmationInput(newCodeConfirmation)) }
+
+        Row(
+            modifier = Modifier
+                .wrapContentWidth(Alignment.CenterHorizontally)
+                .wrapContentHeight(Alignment.Bottom)
+                .clickable { sendIntent(AuthIntent.SignUpButtonClicked) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.sign_up),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Image(painter = painterResource(id = R.drawable.right), contentDescription = null)
+        }
+    }
+
+
+
+
+
+    Row(
+        modifier = Modifier
+            .padding(bottom = 34.dp)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .wrapContentHeight(Alignment.Bottom)
+            .clickable { sendIntent(AuthIntent.SignInNavigationButtonClicked) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(painter = painterResource(id = R.drawable.left), contentDescription = null)
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = stringResource(id = R.string.sign_in),
+            style = MaterialTheme.typography.headlineSmall
+        )
+    }
+
+}
+
+@Composable
 fun GetCodeCard(
     item: String,
     sendIntent: (AuthIntent) -> Unit,
@@ -372,6 +428,58 @@ fun GetCodeCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GetRegisterTextField(text: String, hint: Int, sendText: (String) -> Unit) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+
+    BasicTextField(
+        value = text,
+        interactionSource = interactionSource,
+        onValueChange = { newText -> sendText(newText) },
+        singleLine = true,
+        textStyle = MaterialTheme.typography.bodyMedium,
+        modifier = Modifier
+            .fillMaxWidth()
+            //.wrapContentHeight(align = Alignment.Top)
+            .indicatorLine(
+                enabled = true,
+                isError = false,
+                interactionSource = interactionSource,
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = Color.White.copy(alpha = 0.48f),
+                    disabledIndicatorColor = Color.White.copy(alpha = 0.48f),
+                    unfocusedIndicatorColor = Color.White.copy(alpha = 0.48f)
+                ),
+                focusedIndicatorLineThickness = 2.dp,
+                unfocusedIndicatorLineThickness = 2.dp
+            ),
+        cursorBrush = SolidColor(Color.White)
+    ) { innerTextField ->
+        TextFieldDefaults.OutlinedTextFieldDecorationBox(
+            value = text,
+            innerTextField = innerTextField,
+            enabled = true,
+            singleLine = true,
+            visualTransformation = VisualTransformation.None,
+            interactionSource = interactionSource,
+            placeholder = {
+                Text(
+                    text = stringResource(id = hint),
+                    modifier = Modifier.padding(0.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            contentPadding = PaddingValues(bottom = 6.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent
+            )
+        )
+    }
+}
+
 
 @Preview
 @Composable
@@ -382,7 +490,13 @@ fun LoginPreview() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            LoginScreen()
+            Image(
+                painter = painterResource(id = R.drawable.auth_screen_bg),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            val viewModel: LoginViewModel = viewModel()
+            RegisterScreen("", "", "", "", sendIntent = viewModel::processIntent)
         }
     }
 }

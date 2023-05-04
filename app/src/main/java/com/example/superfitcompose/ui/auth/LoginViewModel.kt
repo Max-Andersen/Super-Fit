@@ -30,17 +30,22 @@ class LoginViewModel : ViewModel(), IntentHandler<AuthIntent> {
 
 
     override fun processIntent(intent: AuthIntent) {
+
         when (intent) {
             is UserNameInput -> {
                 _authScreenState.value = _authScreenState.value!!.copy(login = intent.userName)
             }
 
             is EnterCodeButtonClicked -> {
-                _authScreenState.value = _authScreenState.value!!.copy(enterUserName = false, enterPassword = true)
+                if (ValidationUseCase(_authScreenState.value!!.login)()){
+                    _authScreenState.value = _authScreenState.value!!.copy(enterUserName = false, enterPassword = true, register = false)
+                } else{
+                    _authScreenState.value = _authScreenState.value!!.copy(isError = true, errorMessage = "Invalid Email")
+                }
             }
 
             is SignUpNavigationButtonClicked -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(enterUserName = false, enterPassword = false, register = true)
             }
 
             is CodeNumberInput -> {
@@ -51,19 +56,19 @@ class LoginViewModel : ViewModel(), IntentHandler<AuthIntent> {
             }
 
             is RegisterUserNameInput -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(username = intent.userName)
             }
 
             is RegisterEmailInput -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(email = intent.email)
             }
 
             is RegisterCodeInput -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(code = intent.code)
             }
 
             is RegisterCodeConfirmationInput -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(repeatCode = intent.codeConfirmation)
             }
 
             is SignUpButtonClicked -> {
@@ -71,7 +76,7 @@ class LoginViewModel : ViewModel(), IntentHandler<AuthIntent> {
             }
 
             is SignInNavigationButtonClicked -> {
-
+                _authScreenState.value = _authScreenState.value!!.copy(enterUserName = true, enterPassword = false, register = false)
             }
         }
     }
