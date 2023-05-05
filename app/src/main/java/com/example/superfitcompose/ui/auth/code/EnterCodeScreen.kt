@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,8 +47,11 @@ import com.skydoves.orbital.animateSharedElementTransition
 import com.skydoves.orbital.rememberContentWithOrbitalScope
 
 @Composable
-fun EnterCodeScreen(email: String, navController: NavController, viewModel: CodeInputViewModel = viewModel()) {
-
+fun EnterCodeScreen(
+    email: String,
+    navController: NavController,
+    viewModel: CodeInputViewModel = viewModel()
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.auth_screen_bg),
@@ -83,169 +85,65 @@ fun EnterCodeScreen(email: String, navController: NavController, viewModel: Code
                 .wrapContentWidth()
         )
 
-        var data = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
-
-
-        val movementSpec = SpringSpec<IntOffset>(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = 200f
-        )
-
-        val transformationSpec = SpringSpec<IntSize>(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = 200f
-        )
-
-        val isTransformed = rememberSaveable { mutableStateOf(false) }
-
-        val items = rememberContentWithOrbitalScope {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .wrapContentHeight(Alignment.Bottom),
-                verticalArrangement = Arrangement.spacedBy(21.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    GetCodeCard(
-                        item = data[0],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[1],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[2],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    GetCodeCard(
-                        item = data[3],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[4],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[5],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    GetCodeCard(
-                        item = data[6],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[7],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                    GetCodeCard(
-                        item = data[8],
-                        sendIntent = viewModel::processIntent,
-                        isTransformed = isTransformed,
-                        movementSpec = movementSpec,
-                        transformationSpec = transformationSpec,
-                        orbitalScope = this@rememberContentWithOrbitalScope
-                    )
-                }
-            }
-
-        }
-
-        Orbital(
-            modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp),
-            isTransformed = isTransformed.value,
-            onStartContent = {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    items()
-                }
-
-//            LazyVerticalGrid(
-//                columns = GridCells.Fixed(3),
-//                verticalArrangement = Arrangement.spacedBy(21.dp),
-//                horizontalArrangement = Arrangement.spacedBy(25.dp),
-//                modifier = Modifier
-//
-//            ) {
-//
-//            }
-
-            },
-            onTransformedContent = {
-                data = data.shuffled()
-                Box(modifier = Modifier.fillMaxSize()) {
-                    items()
-                }
-            }
-        )
-
+        SetCodeInputPlace(viewModel::processIntent)
 
     }
-
-
-
 }
 
+@Composable
+fun SetCodeInputPlace(sendIntent: (CodeInputScreenIntent) -> Unit) {
+    val numbers = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
 
+    val isTransformed = rememberSaveable { mutableStateOf(false) }
+
+    val items = mutableListOf<@Composable OrbitalScope.() -> Unit>()
+
+    numbers.forEach { digit ->
+        items.add(rememberContentWithOrbitalScope {
+            GetCodeCard(
+                digit,
+                this
+            ) {
+                sendIntent(CodeInputScreenIntent.CodeNumberInput(digit))
+                isTransformed.value = !isTransformed.value
+            }
+        })
+    }
+
+    Orbital(
+        modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp),
+        isTransformed = isTransformed.value,
+        onStartContent = {
+            items.shuffle()
+            DisplayKeyboard(items = items, orbitalScope = this@Orbital)
+        },
+        onTransformedContent = {
+            items.shuffle()
+            DisplayKeyboard(items = items, this@Orbital)
+        }
+    )
+}
 
 @Composable
 fun GetCodeCard(
     item: String,
-    sendIntent: (CodeInputScreenIntent) -> Unit,
-    isTransformed: MutableState<Boolean>,
-    movementSpec: SpringSpec<IntOffset>,
-    transformationSpec: SpringSpec<IntSize>,
-    orbitalScope: OrbitalScope
+    orbitalScope: OrbitalScope,
+    clickEvent: () -> Unit
 ) {
+    val movementSpec = SpringSpec<IntOffset>(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = 200f
+    )
+
+    val transformationSpec = SpringSpec<IntSize>(
+        dampingRatio = Spring.DampingRatioMediumBouncy,
+        stiffness = 200f
+    )
+
     Card(
         modifier = Modifier
             .clickable {
-                sendIntent(CodeInputScreenIntent.CodeNumberInput(item))
-                isTransformed.value = !isTransformed.value
+                clickEvent()
             }
             .size(78.dp)
             .animateSharedElementTransition(orbitalScope, movementSpec, transformationSpec),
@@ -266,3 +164,29 @@ fun GetCodeCard(
 
     }
 }
+
+@Composable
+fun DisplayKeyboard(
+    items: MutableList<@Composable (OrbitalScope) -> Unit>,
+    orbitalScope: OrbitalScope
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .wrapContentHeight(Alignment.Bottom),
+        verticalArrangement = Arrangement.spacedBy(21.dp)
+    ) {
+        for (i in 0..8 step 3) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                items[i].invoke(orbitalScope)
+                items[i + 1].invoke(orbitalScope)
+                items[i + 2].invoke(orbitalScope)
+            }
+        }
+    }
+}
+
+
