@@ -14,6 +14,7 @@ import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
 import com.example.superfitcompose.ui.auth.register.RegisterScreen
+import com.example.superfitcompose.ui.main.MainScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
                         EnterCodeScreen(email = enteredEmail, navController = navController)
                     }
                     composable(Routes.REGISTER) { RegisterScreen(navController = navController) }
+                    composable(Routes.MAIN_SCREEN) { MainScreen(navController = navController) }
                 }
 
             }

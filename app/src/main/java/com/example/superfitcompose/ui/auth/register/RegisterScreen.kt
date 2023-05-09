@@ -75,7 +75,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
         if (viewState.navigateMainScreen){
             Toast.makeText(LocalContext.current, "Navigate to main screen", Toast.LENGTH_SHORT).show()
             viewModel.processIntent(RegisterScreenIntent.NavigationProcessed)
-            // Todo navigation
+            navController.navigate(Routes.MAIN_SCREEN)
         }
 
         if (viewState.navigateToLogin){
