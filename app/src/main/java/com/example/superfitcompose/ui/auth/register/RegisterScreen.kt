@@ -1,5 +1,7 @@
 package com.example.superfitcompose.ui.auth.register
 
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -66,13 +68,14 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
         val viewState by viewModel.getScreenState().observeAsState(RegisterViewState())
 
         if (viewState.errorMessage.isNotEmpty()) {
-            viewModel.processIntent(RegisterScreenIntent.ErrorProcessed)
             Toast.makeText(LocalContext.current, viewState.errorMessage, Toast.LENGTH_LONG).show()
+            viewModel.processIntent(RegisterScreenIntent.ErrorProcessed)
         }
 
         if (viewState.navigateMainScreen){
-
+            Toast.makeText(LocalContext.current, "Navigate to main screen", Toast.LENGTH_SHORT).show()
             viewModel.processIntent(RegisterScreenIntent.NavigationProcessed)
+            // Todo navigation
         }
 
         if (viewState.navigateToLogin){
@@ -80,8 +83,6 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
 
             navController.navigate(Routes.LOGIN)
         }
-
-
 
 
         Column(

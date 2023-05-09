@@ -1,7 +1,8 @@
 package com.example.superfitcompose.ui.auth.code
 
 data class CodeEnterViewState (
-    val code: String = "",
+    val email: String = "",
+
     val isSuccess: Boolean = false,
     val errorMessage: String = "",
 

@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.auth.code
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +54,11 @@ fun EnterCodeScreen(
     navController: NavController,
     viewModel: CodeInputViewModel = viewModel()
 ) {
+
+    LaunchedEffect(key1 = true){
+        viewModel.processIntent(CodeInputScreenIntent.SetEmail(email))
+    }
+
     Surface(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.auth_screen_bg),
@@ -74,6 +81,11 @@ fun EnterCodeScreen(
         if (viewState.errorMessage.isNotEmpty()) {
             Toast.makeText(LocalContext.current, viewState.errorMessage, Toast.LENGTH_LONG).show()
             viewModel.processIntent(CodeInputScreenIntent.ErrorProcessed)
+        }
+
+        if (viewState.navigateToMainScreen){
+            Toast.makeText(LocalContext.current, "Navigate to main screen", Toast.LENGTH_SHORT).show()
+
         }
 
 

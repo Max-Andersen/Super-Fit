@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.auth.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,10 +29,13 @@ class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
             }
 
             is EnterCodeButtonClicked -> {
-                if (ValidationUseCase(_screenState.value!!.login)()){
+                val validationAnswer = ValidationUseCase(_screenState.value!!.login)()
+                Log.d("!", validationAnswer)
+                Log.d("!", validationAnswer.isEmpty().toString())
+                if (validationAnswer.isEmpty()){
                     _screenState.value = _screenState.value!!.copy(navigateToEnterPassword = true, navigateToRegister = false)
                 } else{
-                    _screenState.value = _screenState.value!!.copy(errorMessage = "Invalid Email")
+                    _screenState.value = _screenState.value!!.copy(errorMessage = validationAnswer)
                 }
             }
 

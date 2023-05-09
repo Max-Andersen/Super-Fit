@@ -1,6 +1,7 @@
 package com.example.superfitcompose.repositories
 
 import com.example.superfitcompose.data.network.ApiResponse
+import com.example.superfitcompose.data.network.models.ApiErrorResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,12 +26,12 @@ abstract class BaseRepository {
                 } else {
 
                     response.errorBody()?.let { error ->
-//                        val parsedError: ErrorMessage =
-//                            Gson().fromJson(error.charStream(), ErrorMessage::class.java)
-//                        emit(ApiResponse.Failure(parsedError.message.orEmpty(), parsedError.code))
+                        val parsedError: ApiErrorResponse =
+                            Gson().fromJson(error.charStream(), ApiErrorResponse::class.java)
+                        emit(ApiResponse.Failure(parsedError.message, parsedError.code))
 
 
-                        emit(ApiResponse.Failure("", response.code()))
+                        //emit(ApiResponse.Failure("", response.code()))
 
                         error.close()
                     }
