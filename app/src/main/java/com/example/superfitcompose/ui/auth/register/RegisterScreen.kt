@@ -132,9 +132,6 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
         }
 
 
-
-
-
         Row(
             modifier = Modifier
                 .padding(bottom = 34.dp)

@@ -95,7 +95,7 @@ fun EnterCodeScreen(
             text = email,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
-                .padding(start = 104.dp, end = 104.dp, top = 244.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 244.dp)
                 .wrapContentWidth()
         )
 

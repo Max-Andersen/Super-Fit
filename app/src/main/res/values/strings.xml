@@ -1,10 +1,35 @@
 <resources>
-    <string name="app_name">SuperFitCompose</string>
+    <string name="app_name">SuperFit</string>
     <string name="super_fit">SuperFit</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
     <string name="username">UserName</string>
     <string name="email">Email</string>
     <string name="code">Code</string>
     <string name="repeat_code">RepeatCode</string>
+
+    <string name="my_body">My body</string>
+    <string name="details">Details</string>
+    <string name="last_exercises">Last exercises</string>
+    <string name="exercises">Exercises</string>
+    <string name="see_all">See all</string>
+
+
+    <string name="push_ups">Push-Ups</string>
+    <string name="push_ups_description">Push-ups exercise the pectoral muscles, triceps, and anterior deltoids.</string>
+
+    <string name="plank">Plank</string>
+    <string name="plank_description">The plank strengthens the abdominals, back and shoulders.</string>
+
+    <string name="squats">Squats</string>
+    <string name="squats_description">Сonsidered a vital exercise for increasing the strength and size of the lower body.</string>
+
+    <string name="crunch">Crunch </string>
+    <string name="crunch_description">It involves the entire abs, but primarily it works the rectus abdominis muscle.</string>
+
+    <string name="running">Running</string>
+    <string name="running_description">It develops endurance, strengthens the legs and the cardiovascular system.</string>
+
+
 </resources>

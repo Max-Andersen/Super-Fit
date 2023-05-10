@@ -38,33 +38,36 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
     }
 
     override fun processIntent(intent: RegisterScreenIntent) {
+        val state = _screenState.value ?: return
+
         when (intent) {
             is ErrorProcessed -> {
-                _screenState.value = _screenState.value?.copy(errorMessage = "")
+                _screenState.value = state.copy(errorMessage = "")
             }
 
             is SignInNavigationButtonClicked -> {
-                _screenState.value = _screenState.value?.copy(navigateToLogin = true)
+                _screenState.value = state.copy(navigateToLogin = true)
             }
 
             is NavigationProcessed -> {
                 _screenState.value =
-                    _screenState.value?.copy(navigateToLogin = false, navigateMainScreen = false)
+                    state.copy(navigateToLogin = false, navigateMainScreen = false)
             }
 
             is SignUpButtonClicked -> {
-                val email = _screenState.value!!.email
-                val code = _screenState.value!!.code
-                val codeConfirmation = _screenState.value!!.codeConfirmation
+
+                val email = state.email
+                val code = state.code
+                val codeConfirmation = state.codeConfirmation
 
                 val validationAnswer = ValidationUseCase(email, code, codeConfirmation)()
 
                 if (validationAnswer.isEmpty()) {
                     viewModelScope.launch {
                         val registerAnswer: ApiResponse<SimpleMessage> =
-                            withContext(Dispatchers.IO) {
-                                registerRequest(email, code)
-                            }
+                            //withContext(Dispatchers.IO) {
+                            registerRequest(email, code)
+                        //}
 
                         if (registerAnswer is ApiResponse.Success) {
                             GetTokensUseCase(email, code)().let { tokens ->
@@ -74,13 +77,15 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
                                         SharedPreferencesInteractor().updateRefreshToken(tokens.data.refresh)
                                         Log.d("!", "success")
                                         withContext(Dispatchers.Main) {
-                                            _screenState.value = _screenState.value?.copy(navigateMainScreen = true)
+                                            _screenState.value =
+                                                state.copy(navigateMainScreen = true)
                                         }
                                     }
 
                                     is ApiResponse.Failure -> {
                                         withContext(Dispatchers.Main) {
-                                            _screenState.value = _screenState.value?.copy(errorMessage = tokens.errorMessage)
+                                            _screenState.value =
+                                                state.copy(errorMessage = tokens.errorMessage)
                                         }
                                     }
 
@@ -94,25 +99,25 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
 
                     }
                 } else {
-                    _screenState.value = _screenState.value?.copy(errorMessage = validationAnswer)
+                    _screenState.value = state.copy(errorMessage = validationAnswer)
                 }
             }
 
             is UserNameInput -> {
-                _screenState.value = _screenState.value?.copy(username = intent.userName)
+                _screenState.value = state.copy(username = intent.userName)
             }
 
             is EmailInput -> {
-                _screenState.value = _screenState.value?.copy(email = intent.email)
+                _screenState.value = state.copy(email = intent.email)
             }
 
             is CodeInput -> {
-                _screenState.value = _screenState.value?.copy(code = intent.code)
+                _screenState.value = state.copy(code = intent.code)
             }
 
             is CodeConfirmationInput -> {
                 _screenState.value =
-                    _screenState.value?.copy(codeConfirmation = intent.codeConfirmation)
+                    state.copy(codeConfirmation = intent.codeConfirmation)
             }
         }
     }
