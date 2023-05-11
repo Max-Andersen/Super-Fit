@@ -1,5 +1,6 @@
-package com.example.superfitcompose.ui.main
+package com.example.superfitcompose.ui.main.mainscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,14 +46,51 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.ui.Routes
+import com.example.superfitcompose.ui.main.Exercise
+import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.example.superfitcompose.ui.theme.greyTint
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = viewModel()) {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())) {
+
+    val viewState by viewModel.getViewState().observeAsState(MainScreenViewState())
+
+    if (viewState.navigateToMyBody) {
+        viewModel.processIntent(MainScreenIntent.NavigationProcessed)
+        // Todo navigation
+        Toast.makeText(
+            LocalContext.current,
+            "Navigation to My body",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    if (viewState.seeAllExercises) {
+        viewModel.processIntent(MainScreenIntent.NavigationProcessed)
+        navController.navigate(Routes.ALL_EXERCISES)
+    }
+
+    if (viewState.signOut) {
+        // Todo navigation
+    }
+
+    if (viewState.navigateToExercise != null) {
+        // Todo navigation
+        val destination = viewState.navigateToExercise
+        Toast.makeText(
+            LocalContext.current,
+            "Navigation to $destination",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,15 +120,14 @@ fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = vi
             )
         }
 
-        MainScreenFilling()
-
+        MainScreenFilling(viewModel::processIntent)
 
     }
 }
 
 
 @Composable
-fun MainScreenFilling() {
+fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,81 +138,67 @@ fun MainScreenFilling() {
     ) {
 
 
-        if (true) {  // Todo state of showing list of exercises
+        Text(
+            text = stringResource(id = R.string.my_body),
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black
+        )
+
+        MyBodyCard { sendIntent(MainScreenIntent.ClickedOnMyBodyCard) }
+
+        Spacer(modifier = Modifier.size(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = stringResource(id = R.string.my_body),
+                text = stringResource(id = R.string.last_exercises),
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.Black
             )
 
-            MyBodCard()
+            Text(
+                text = stringResource(id = R.string.see_all),
+                style = MaterialTheme.typography.bodySmall,
+                color = greyTint,
+                modifier = Modifier.clickable {
+                    sendIntent(MainScreenIntent.ClickedOnSeeAllExercises)
+                }
+            )
 
+        }
+
+
+
+        ExerciseCard(type = stringResource(id = R.string.push_ups)) { sendIntent(MainScreenIntent.ClickedOnExercise(exercise = Exercise.Push_Ups)) }
+
+        ExerciseCard(type = stringResource(id = R.string.plank)) { sendIntent(MainScreenIntent.ClickedOnExercise(exercise = Exercise.Plank)) }
+
+
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier
+                .padding(bottom = 34.dp)
+                .wrapContentWidth(Alignment.CenterHorizontally)
+                .wrapContentHeight(Alignment.Bottom)
+                .clickable { sendIntent(MainScreenIntent.ClickedOnSignOut) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.left),
+                colorFilter = ColorFilter.tint(color = Color.Black),
+                contentDescription = null
+            )
             Spacer(modifier = Modifier.size(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.last_exercises),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.Black
-                )
-
-                Text(
-                    text = stringResource(id = R.string.see_all),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = greyTint,
-                    modifier = Modifier.clickable {
-                        // Todo navigation
-                    }
-                )
-
-            }
-
-
-
-            ExerciseCard(type = stringResource(id = R.string.push_ups))
-
-            ExerciseCard(type = stringResource(id = R.string.plank))
-
-
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(
-                modifier = Modifier
-                    .padding(bottom = 34.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
-                    .wrapContentHeight(Alignment.Bottom),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.left),
-                    colorFilter = ColorFilter.tint(color = Color.Black),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = stringResource(id = R.string.sign_out),
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.Black
-                )
-            }
-
-        } else {
             Text(
-                text = stringResource(id = R.string.exercises),
+                text = stringResource(id = R.string.sign_out),
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.Black
             )
-
-            ExerciseCard(type = stringResource(id = R.string.push_ups))
-            ExerciseCard(type = stringResource(id = R.string.plank))
-            ExerciseCard(type = stringResource(id = R.string.squats))
-            ExerciseCard(type = stringResource(id = R.string.crunch))
-            ExerciseCard(type = stringResource(id = R.string.running))
         }
 
 
@@ -181,7 +206,7 @@ fun MainScreenFilling() {
 }
 
 @Composable
-fun MyBodCard() {
+fun MyBodyCard(clicked: () -> Unit) {
     Box(
         modifier = Modifier
             .background(
@@ -190,6 +215,7 @@ fun MyBodCard() {
             )
             .fillMaxWidth()
             .wrapContentHeight()
+            .clickable { clicked() }
     ) {
         Row(
             modifier = Modifier
@@ -259,7 +285,7 @@ fun MyBodCard() {
                     Text(
                         text = stringResource(id = R.string.details),
                         style = MaterialTheme.typography.bodySmall,
-)
+                    )
                     Image(
                         painter = painterResource(id = R.drawable.little_right),
                         contentDescription = null
@@ -274,68 +300,6 @@ fun MyBodCard() {
     }
 }
 
-@Composable
-fun ExerciseCard(type: String) {
-    val data = when (type) {
-        stringResource(id = R.string.push_ups) -> Pair(
-            stringResource(id = R.string.push_ups_description), painterResource(
-                id = R.drawable.mask_group_push_ups
-            )
-        )
-
-        stringResource(id = R.string.plank) -> Pair(
-            stringResource(id = R.string.plank_description), painterResource(
-                id = R.drawable.mask_group_plank
-            )
-        )
-
-        stringResource(id = R.string.squats) -> Pair(
-            stringResource(id = R.string.squats_description), painterResource(
-                id = R.drawable.mask_group_squats
-            )
-        )
-
-        stringResource(id = R.string.crunch) -> Pair(
-            stringResource(id = R.string.crunch_description), painterResource(
-                id = R.drawable.mask_group_crunch
-            )
-        )
-
-        else -> Pair(
-            stringResource(id = R.string.running_description), painterResource(
-                id = R.drawable.mask_group_running
-            )
-        )
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(8.dp)
-            )
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Image(painter = data.second, contentDescription = null)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-            ) {
-                Text(
-                    text = type,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontSize = 14.sp
-                )
-                Spacer(modifier = Modifier.size(4.dp))
-                Text(text = data.first, style = MaterialTheme.typography.bodySmall)
-            }
-        }
-
-    }
-
-}
 
 @Preview
 @Composable
