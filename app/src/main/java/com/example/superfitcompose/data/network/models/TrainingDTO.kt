@@ -1,6 +1,8 @@
 package com.example.superfitcompose.data.network.models
 
 import com.example.superfitcompose.domain.models.Training
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable

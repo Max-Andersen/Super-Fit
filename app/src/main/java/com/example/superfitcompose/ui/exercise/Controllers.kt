@@ -24,6 +24,7 @@ import com.example.superfitcompose.R
 @Composable
 fun Controllers(
     isPaused: Boolean,
+    isFinished: Boolean,
     onPause: () -> Unit,
     onStart: () -> Unit,
     onStop: () -> Unit
@@ -35,7 +36,7 @@ fun Controllers(
         verticalArrangement = Arrangement.Bottom
     ) {
         if (isPaused) {
-            Button(onClick = onStart, text = R.string.start_exercise)
+            Button(onClick = onStart, enabled = !isFinished, text = R.string.start_exercise)
             Spacer(modifier = Modifier.size(16.dp))
             Button(onClick = onStop, text = R.string.finish_exercise)
         } else {
@@ -48,6 +49,7 @@ fun Controllers(
 @Composable
 internal fun Button(
     onClick: () -> Unit,
+    enabled: Boolean = true,
     text: Int
 ) {
     Box(
@@ -55,7 +57,7 @@ internal fun Button(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
             .clickable {
-                onClick()
+                if (enabled) onClick()
             },
     ) {
         Text(

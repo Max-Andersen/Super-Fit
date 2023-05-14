@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.exercise
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -34,11 +36,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
 
 @Composable
-fun ExerciseScreen(navController: NavController, viewModel: TimerViewModel = viewModel()) {
+fun ExerciseScreen(navController: NavController, viewModel: ExerciseViewModel = viewModel()) {
+    LaunchedEffect(key1 = true) {
+        viewModel.processIntent(ExerciseIntent.LoadExerciseData(TrainingType.PLANK))
+        Log.d("!!!", "LOAD TIME")
+    }
+
     SuperFitComposeTheme {
         val screenState by viewModel.getScreenState().observeAsState(ExerciseViewState())
 
@@ -65,9 +73,10 @@ fun ExerciseScreen(navController: NavController, viewModel: TimerViewModel = vie
 
                 Controllers(
                     screenState.pause,
-                    onPause = { viewModel.pause() },
-                    onStart = { viewModel.start() },
-                    onStop = { viewModel.stop() }
+                    screenState.finished,
+                    onPause = { viewModel.processIntent(ExerciseIntent.PauseExercise) },
+                    onStart = { viewModel.processIntent(ExerciseIntent.StartExercise) },
+                    onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) }
                 )
             }
         }
