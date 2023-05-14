@@ -6,6 +6,9 @@ val LightPurple = Color(0xFFBB86FC)
 val Background = Color(0xFF282828)
 val OnBackground = Color(0xFFC6C6C6)
 
+
+val Surface = Color(0xFFB461F5)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

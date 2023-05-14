@@ -14,6 +14,7 @@ import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
 import com.example.superfitcompose.ui.auth.register.RegisterScreen
+import com.example.superfitcompose.ui.exercise.ExerciseScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,13 +24,14 @@ class MainActivity : ComponentActivity() {
             SuperFitComposeTheme {
 
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Routes.LOGIN) {
+                NavHost(navController = navController, startDestination = Routes.EXERCISE) {
                     composable(Routes.LOGIN) { LoginScreen(navController = navController) }
                     composable(Routes.ENTER_PASSWORD + "/{email}") { navBackStack ->
                         val enteredEmail = navBackStack.arguments?.getString("email")!!
                         EnterCodeScreen(email = enteredEmail, navController = navController)
                     }
                     composable(Routes.REGISTER) { RegisterScreen(navController = navController) }
+                    composable(Routes.EXERCISE) { ExerciseScreen(navController = navController) }
                 }
 
             }
