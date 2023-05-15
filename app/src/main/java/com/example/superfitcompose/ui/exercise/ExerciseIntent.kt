@@ -11,4 +11,6 @@ sealed class ExerciseIntent{
 
     object FinishExercise: ExerciseIntent()
 
+    object ExerciseStepDone: ExerciseIntent()
+
 }

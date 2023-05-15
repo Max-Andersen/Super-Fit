@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.exercise
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import com.example.superfitcompose.data.network.ApiResponse
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.domain.usecases.GetTrainingHistoryUseCase
 import com.example.superfitcompose.domain.usecases.SaveExerciseProgressUseCase
+import com.example.superfitcompose.ui.exercise.ExerciseIntent.ExerciseStepDone
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.FinishExercise
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.LoadExerciseData
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.PauseExercise
@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.properties.Delegates
 
@@ -39,12 +38,16 @@ class ExerciseViewModel(
     private var beginValue by Delegates.notNull<Int>()
     private lateinit var trainingType: TrainingType
 
+    @Volatile
+    private var exerciseStepDone: Boolean = false
+
     fun getScreenState(): LiveData<ExerciseViewState> = _screenState
 
     private var job: Job? = null
 
-    private suspend fun runningTimer() {
+    private suspend fun plankTimer() {
         delay(timeMillis = 1000)
+        exerciseStepDone = true
     }
 
     private fun start() {
@@ -76,15 +79,18 @@ class ExerciseViewModel(
                 }
 
 
-                //check exercise and select right count function
-
-                runningTimer()
-
-                withContext(Dispatchers.Main) {
-                    _screenState.value =
-                        state.copy(counter = state.counter - 1)
+                if (trainingType == TrainingType.PLANK) {
+                    plankTimer()
                 }
 
+                if (exerciseStepDone) {
+                    exerciseStepDone = false
+
+                    withContext(Dispatchers.Main) {
+                        _screenState.value =
+                            state.copy(counter = state.counter - 1)
+                    }
+                }
             }
         }
     }
@@ -99,7 +105,7 @@ class ExerciseViewModel(
         job?.cancel()
         _screenState.value = state.copy(pause = true, finished = true)
         viewModelScope.launch {
-            saveExerciseProgress(beginValue - state.counter)
+            saveExerciseProgress(if (trainingType == TrainingType.CRUNCH) beginValue else beginValue - state.counter)
         }
     }
 
@@ -159,6 +165,12 @@ class ExerciseViewModel(
                     }
                 }
 
+            }
+
+            is ExerciseStepDone -> {
+                if (state.beginCounterValue != 0) {
+                    exerciseStepDone = true
+                }
             }
 
             is StartExercise -> {

@@ -93,5 +93,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")// for date serialization
 
+    implementation 'com.vmadalin:easypermissions-ktx:1.0.0'
+
 
 }
