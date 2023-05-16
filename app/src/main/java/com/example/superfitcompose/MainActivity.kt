@@ -1,12 +1,18 @@
 package com.example.superfitcompose
 
+import android.hardware.display.DisplayManager
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.Display
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,8 +26,26 @@ import com.example.superfitcompose.ui.main.exercises.AllExercisesScreen
 import com.example.superfitcompose.ui.main.mainscreen.MainScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
+
+val bottomPadding = 25.dp
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+
+//        val defaultDisplay = getSystemService<DisplayManager>()?.getDisplay(Display.DEFAULT_DISPLAY)
+//
+//
+//        val metrics = DisplayMetrics()
+//        windowManager.defaultDisplay.getRealMetrics(metrics)
+//        val decorViewHeight = window.decorView.height
+//        val screenHeight = metrics.heightPixels
+//        val navigationBarHeight = decorViewHeight - screenHeight
+
+
+
+
         super.onCreate(savedInstanceState)
         setContent {
             SuperFitComposeTheme {

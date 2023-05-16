@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.ui.Routes
 import com.skydoves.orbital.Orbital
 import com.skydoves.orbital.OrbitalScope
@@ -97,7 +98,7 @@ fun EnterCodeScreen(
             text = email,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, top = 244.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 274.dp)
                 .wrapContentWidth()
         )
 
@@ -127,7 +128,7 @@ fun SetCodeInputPlace(sendIntent: (CodeInputScreenIntent) -> Unit) {
     }
 
     Orbital(
-        modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp),
+        modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp + bottomPadding*2),
         isTransformed = isTransformed.value,
         onStartContent = {
             items.shuffle()

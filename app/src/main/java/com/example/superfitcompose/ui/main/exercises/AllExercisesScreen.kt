@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
@@ -143,7 +144,7 @@ fun AllExercisesScreenFilling(cardClicked: (AllExercisesIntent) -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.size(1.dp))
+        Spacer(modifier = Modifier.size(bottomPadding*2))
     }
 }
 

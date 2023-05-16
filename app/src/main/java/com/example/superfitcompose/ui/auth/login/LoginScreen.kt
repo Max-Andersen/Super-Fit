@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
@@ -160,7 +161,7 @@ fun EnterUsernameScreen(text: String, sendIntent: (LoginScreenIntent) -> Unit) {
 
     Row(
         modifier = Modifier
-            .padding(bottom = 34.dp)
+            .padding(bottom = 34.dp + bottomPadding)
             .wrapContentWidth(Alignment.CenterHorizontally)
             .wrapContentHeight(Alignment.Bottom)
             .clickable { sendIntent(LoginScreenIntent.SignUpNavigationButtonClicked) },

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.ui.Routes
 
 @Composable
@@ -134,7 +135,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
 
         Row(
             modifier = Modifier
-                .padding(bottom = 34.dp)
+                .padding(bottom = 34.dp + bottomPadding)
                 .wrapContentWidth(Alignment.CenterHorizontally)
                 .wrapContentHeight(Alignment.Bottom)
                 .clickable { viewModel.processIntent(RegisterScreenIntent.SignInNavigationButtonClicked) },

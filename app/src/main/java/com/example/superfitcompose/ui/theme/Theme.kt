@@ -6,11 +6,11 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val ColorScheme = lightColorScheme(
     primary = LightPurple,
@@ -41,14 +41,19 @@ fun SuperFitComposeTheme(
 ) {
     val colorScheme = ColorScheme
 
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
-    }
+//    val currentActivity = LocalView.current.context as Activity         // Not working with Preview
+//    currentActivity.window.statusBarColor = Color.Transparent.toArgb()
+
+//    WindowInsetsControllerCompat(currentActivity.window, LocalView.current).let { controller ->
+//        controller.systemBarsBehavior =
+//            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//        controller.hide(WindowInsetsCompat.Type.navigationBars())
+//    }
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(
+        color = Color.Transparent
+    )
 
     MaterialTheme(
         colorScheme = colorScheme,

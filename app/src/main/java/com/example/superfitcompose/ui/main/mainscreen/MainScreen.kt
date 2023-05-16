@@ -46,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
@@ -190,7 +191,7 @@ fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
 
         Row(
             modifier = Modifier
-                .padding(bottom = 34.dp)
+                .padding(bottom = 34.dp + bottomPadding)
                 .wrapContentWidth(Alignment.CenterHorizontally)
                 .wrapContentHeight(Alignment.Bottom)
                 .clickable { sendIntent(MainScreenIntent.ClickedOnSignOut) },
