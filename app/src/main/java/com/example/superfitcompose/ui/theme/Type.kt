@@ -68,7 +68,7 @@ val MyTypography = Typography(
         fontSize = 12.sp,
         lineHeight = 15.sp,
         letterSpacing = letterSpacing,
-        color = Color.White
+        color = OnBackground
     ),
 
 

@@ -16,6 +16,8 @@ import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
 import com.example.superfitcompose.ui.auth.register.RegisterScreen
 import com.example.superfitcompose.ui.exercise.ExerciseScreen
+import com.example.superfitcompose.ui.main.exercises.AllExercisesScreen
+import com.example.superfitcompose.ui.main.mainscreen.MainScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,13 +27,15 @@ class MainActivity : ComponentActivity() {
             SuperFitComposeTheme {
 
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Routes.EXERCISE) {
+                NavHost(navController = navController, startDestination = Routes.LOGIN) {
                     composable(Routes.LOGIN) { LoginScreen(navController = navController) }
                     composable(Routes.ENTER_PASSWORD + "/{email}") { navBackStack ->
                         val enteredEmail = navBackStack.arguments?.getString("email")!!
                         EnterCodeScreen(email = enteredEmail, navController = navController)
                     }
                     composable(Routes.REGISTER) { RegisterScreen(navController = navController) }
+                    composable(Routes.MAIN_SCREEN) { MainScreen(navController = navController) }
+                    composable(Routes.ALL_EXERCISES) { AllExercisesScreen(navController = navController) }
                     composable(Routes.EXERCISE) { navBackStack ->
 //                        val exercise =
 //                            TrainingType.valueOf(navBackStack.arguments?.getString("exercise_type")!!)

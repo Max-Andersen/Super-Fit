@@ -15,6 +15,9 @@ class GetTokensUseCase(private val login: String, private val code: String) {
             when (refresh) {
                 is ApiResponse.Loading -> {}
                 is ApiResponse.Success -> {
+
+
+
                     GetAccessTokenUseCase(RefreshToken(refresh.data.refreshToken))().last().let { access ->
                         when (access) {
                             is ApiResponse.Loading -> {}
@@ -27,6 +30,8 @@ class GetTokensUseCase(private val login: String, private val code: String) {
                             }
                         }
                     }
+
+
                 }
 
                 is ApiResponse.Failure -> {

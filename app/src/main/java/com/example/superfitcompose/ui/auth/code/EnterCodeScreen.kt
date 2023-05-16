@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.ui.Routes
 import com.skydoves.orbital.Orbital
 import com.skydoves.orbital.OrbitalScope
 import com.skydoves.orbital.animateSharedElementTransition
@@ -85,7 +86,8 @@ fun EnterCodeScreen(
 
         if (viewState.navigateToMainScreen){
             Toast.makeText(LocalContext.current, "Navigate to main screen", Toast.LENGTH_SHORT).show()
-
+            viewModel.processIntent(CodeInputScreenIntent.NavigationProcessed)
+            navController.navigate(Routes.MAIN_SCREEN)
         }
 
 
@@ -93,7 +95,7 @@ fun EnterCodeScreen(
             text = email,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
-                .padding(start = 104.dp, end = 104.dp, top = 244.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 244.dp)
                 .wrapContentWidth()
         )
 
