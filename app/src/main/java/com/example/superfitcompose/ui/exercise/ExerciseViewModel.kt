@@ -41,6 +41,10 @@ class ExerciseViewModel(
     @Volatile
     private var exerciseStepDone: Boolean = false
 
+    @Volatile
+    private var exerciseStep: Int = 1
+
+
     fun getScreenState(): LiveData<ExerciseViewState> = _screenState
 
     private var job: Job? = null
@@ -88,7 +92,7 @@ class ExerciseViewModel(
 
                     withContext(Dispatchers.Main) {
                         _screenState.value =
-                            state.copy(counter = state.counter - 1)
+                            state.copy(counter = state.counter - exerciseStep)
                     }
                 }
             }
@@ -169,6 +173,7 @@ class ExerciseViewModel(
 
             is ExerciseStepDone -> {
                 if (state.beginCounterValue != 0) {
+                    exerciseStep = intent.count
                     exerciseStepDone = true
                 }
             }

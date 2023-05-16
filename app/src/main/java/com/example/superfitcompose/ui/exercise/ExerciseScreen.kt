@@ -7,7 +7,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -47,7 +46,7 @@ import com.example.superfitcompose.R
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.vmadalin.easypermissions.EasyPermissions
-import kotlin.math.abs
+import java.util.Locale
 
 internal var lastUpdate = 0L
 
@@ -71,8 +70,7 @@ fun ExerciseScreen(
 
     val isActivityRecognitionPermissionFree = false
     val isActivityRecognitionPermissionGranted = EasyPermissions.hasPermissions(
-        LocalContext.current,
-        ACTIVITY_RECOGNITION
+        LocalContext.current, ACTIVITY_RECOGNITION
     )
 
     if (isActivityRecognitionPermissionFree || isActivityRecognitionPermissionGranted) {
@@ -99,7 +97,7 @@ fun ExerciseScreen(
                     lastUpdate = curTime
                     processSensorMovement(event, exerciseType) {
                         viewModel.processIntent(
-                            ExerciseIntent.ExerciseStepDone
+                            ExerciseIntent.ExerciseStepDone()
                         )
                     }
 
@@ -109,14 +107,18 @@ fun ExerciseScreen(
             override fun onAccuracyChanged(p0: Sensor, p1: Int) {}
         }
 
+        var previousTotalSteps = 0f
+
         val stepCountListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
-                //totalSteps = event.values[0]
+                val totalSteps = event.values[0]
+                if (previousTotalSteps == 0f) previousTotalSteps = totalSteps
 
-                //val currentSteps = totalSteps.toInt() - previousTotalSteps.toInt()
-                Log.d("SENSOR", event.values[0].toString())
+                val currentSteps = totalSteps.toInt() - previousTotalSteps
+                previousTotalSteps = totalSteps
+
                 viewModel.processIntent(
-                    ExerciseIntent.ExerciseStepDone
+                    ExerciseIntent.ExerciseStepDone(currentSteps.toInt())
                 )
             }
 
@@ -136,24 +138,17 @@ fun ExerciseScreen(
             TrainingType.RUNNING -> {
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
                 sensorManager.registerListener(
-                    stepCountListener,
-                    sensor,
-                    SensorManager.SENSOR_DELAY_NORMAL
+                    stepCountListener, sensor, SensorManager.SENSOR_DELAY_FASTEST
                 )
             }
 
             else -> { // Push-Ups or Squats, both need ACCELERATION
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
                 sensorManager.registerListener(
-                    movementListener,
-                    sensor,
-                    SensorManager.SENSOR_DELAY_UI
+                    movementListener, sensor, SensorManager.SENSOR_DELAY_UI
                 )
             }
-
-
         }
-
     }
 
 
@@ -168,7 +163,10 @@ fun ExerciseScreen(
         ) {
             Column {
                 Text(
-                    text = "Plank",
+                    text = with(Locale.ROOT) {
+                        exerciseType.name.lowercase(this)
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(this) else it.toString() }
+                    },
                     style = MaterialTheme.typography.headlineMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -182,49 +180,38 @@ fun ExerciseScreen(
                     exerciseType
                 )
 
-                Controllers(
-                    screenState.pause,
+                Controllers(screenState.pause,
                     screenState.finished,
                     onPause = { viewModel.processIntent(ExerciseIntent.PauseExercise) },
                     onStart = { viewModel.processIntent(ExerciseIntent.StartExercise) },
-                    onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) }
-                )
+                    onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) })
             }
         }
     }
 }
 
 fun processSensorMovement(
-    event: SensorEvent,
-    exerciseType: TrainingType,
-    processIntent: () -> Unit
+    event: SensorEvent, exerciseType: TrainingType, processIntent: () -> Unit
 ) {
-
     valueY = event.values[1]
     valueZ = event.values[2]
 
     if (exerciseType == TrainingType.SQUATS) {
-        if (abs(valueY) < sensitivity)
-            valueY = 0f
-
-        if (valueY < -2f) {
+        if (valueY < -sensitivity) {
             movementDown = true
         }
 
-        if (valueY > 2f) {
+        if (valueY > sensitivity) {
             movementUp = true
         }
     }
 
     if (exerciseType == TrainingType.PUSH_UP) {
-        if (abs(valueZ) < sensitivity)
-            valueZ = 0f
-
-        if (valueZ < -2f) {
+        if (valueZ < -sensitivity) {
             movementDown = true
         }
 
-        if (valueZ > 2f) {
+        if (valueZ > sensitivity) {
             movementUp = true
         }
     }
@@ -238,15 +225,11 @@ fun processSensorMovement(
 
 @Composable
 fun ExerciseCounter(
-    counter: Int,
-    counterBeginValue: Int,
-    finished: Boolean,
-    exerciseType: TrainingType
+    counter: Int, counterBeginValue: Int, finished: Boolean, exerciseType: TrainingType
 ) {
 
     val progressAngle by animateFloatAsState(
-        targetValue = 360f / counterBeginValue.toFloat() * counter,
-        animationSpec = tween(500)
+        targetValue = 360f / counterBeginValue.toFloat() * counter, animationSpec = tween(500)
     )
 
     Box(
@@ -275,6 +258,15 @@ fun ExerciseProgress(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
+        val signText = when (exerciseType) {
+            TrainingType.SQUATS -> R.string.exercise_times_left
+            TrainingType.PUSH_UP -> R.string.exercise_times_left
+            TrainingType.PLANK -> R.string.exercise_seconds_left
+            TrainingType.CRUNCH -> R.string.exercise_need_to_do
+            TrainingType.RUNNING -> R.string.exercise_meters_to_pass
+        }
+
         if (finished) {
             if (counter <= 0 || exerciseType == TrainingType.CRUNCH) {
                 Image(
@@ -282,9 +274,12 @@ fun ExerciseProgress(
                     contentDescription = null,
                 )
             } else {
+                val str = String.format(
+                    stringResource(id = R.string.exercise_not_finished),
+                    counter.toString()
+                )
                 Text(
-                    text = "$counter times are missing.\n" +
-                            "You can do it better!",
+                    text = str,
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
                 )
@@ -295,7 +290,7 @@ fun ExerciseProgress(
                 style = MaterialTheme.typography.headlineLarge,
             )
             Text(
-                text = stringResource(id = R.string.exercise_seconds_left),
+                text = stringResource(id = signText),
                 style = MaterialTheme.typography.headlineSmall,
                 fontSize = 16.sp
             )
@@ -309,28 +304,26 @@ fun ExerciseProgress(
 internal fun CircleProgress(
     angle: Float,
 ) {
-    Box(
-        modifier = Modifier
-            .padding()
-            .fillMaxSize()
-            .aspectRatio(1f)
-            .drawBehind {
-                drawArc(
-                    color = Color.DarkGray,
-                    startAngle = 0f,
-                    sweepAngle = 360f,
-                    useCenter = false,
-                    style = Stroke(width = 10f)
-                )
-                drawArc(
-                    color = Color(0xFFB461F5),
-                    startAngle = -90f,
-                    sweepAngle = angle,
-                    useCenter = false,
-                    style = Stroke(width = 10f, cap = StrokeCap.Round)
-                )
-            }
-    )
+    Box(modifier = Modifier
+        .padding()
+        .fillMaxSize()
+        .aspectRatio(1f)
+        .drawBehind {
+            drawArc(
+                color = Color.DarkGray,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(width = 10f)
+            )
+            drawArc(
+                color = Color(0xFFB461F5),
+                startAngle = -90f,
+                sweepAngle = angle,
+                useCenter = false,
+                style = Stroke(width = 10f, cap = StrokeCap.Round)
+            )
+        })
 }
 
 

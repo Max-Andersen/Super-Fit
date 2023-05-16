@@ -13,6 +13,13 @@
     <string name="pause_exercise">Pause</string>
     <string name="start_exercise">Start</string>
     <string name="go_home">Go Home</string>
+
+    <string name="exercise_need_to_do">NEED TO DO</string>
+    <string name="exercise_times_left">TIMES LEFT</string>
     <string name="exercise_seconds_left">SECONDS LEFT</string>
+    <string name="exercise_meters_to_pass">METERS TO PASS</string>
+
+
+    <string name="exercise_not_finished">%1s times are missing.\nYou can do it better!</string>
 
 </resources>
