@@ -56,18 +56,16 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
 
             is SignUpButtonClicked -> {
 
-                val email = state.email
-                val code = state.code
-                val codeConfirmation = state.codeConfirmation
+                val email = state.email.trim()
+                val code = state.code.trim()
+                val codeConfirmation = state.codeConfirmation.trim()
 
                 val validationAnswer = ValidationUseCase(email, code, codeConfirmation)()
 
                 if (validationAnswer.isEmpty()) {
                     viewModelScope.launch {
                         val registerAnswer: ApiResponse<SimpleMessage> =
-                            //withContext(Dispatchers.IO) {
                             registerRequest(email, code)
-                        //}
 
                         if (registerAnswer is ApiResponse.Success) {
                             GetTokensUseCase(email, code)().let { tokens ->
@@ -75,7 +73,6 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
                                     is ApiResponse.Success -> {
                                         SharedPreferencesInteractor().updateAccessToken(tokens.data.access)
                                         SharedPreferencesInteractor().updateRefreshToken(tokens.data.refresh)
-                                        Log.d("!", "success")
                                         withContext(Dispatchers.Main) {
                                             _screenState.value =
                                                 state.copy(navigateMainScreen = true)
@@ -99,7 +96,7 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
 
                     }
                 } else {
-                    _screenState.value = state.copy(errorMessage = validationAnswer)
+                    _screenState.value = state.copy(errorMessage = validationAnswer.dropLast(2))
                 }
             }
 

@@ -36,10 +36,13 @@ class MainActivity : ComponentActivity() {
                     composable(Routes.REGISTER) { RegisterScreen(navController = navController) }
                     composable(Routes.MAIN_SCREEN) { MainScreen(navController = navController) }
                     composable(Routes.ALL_EXERCISES) { AllExercisesScreen(navController = navController) }
-                    composable(Routes.EXERCISE) { navBackStack ->
-//                        val exercise =
-//                            TrainingType.valueOf(navBackStack.arguments?.getString("exercise_type")!!)
-                        ExerciseScreen(navController = navController, exerciseType = TrainingType.CRUNCH)
+                    composable(Routes.EXERCISE + "/{exercise_type}") { navBackStack ->
+                        val exercise =
+                            TrainingType.valueOf(navBackStack.arguments?.getString("exercise_type")!!)
+                        ExerciseScreen(
+                            navController = navController,
+                            exerciseType = exercise
+                        )
                     }
                 }
 

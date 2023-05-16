@@ -28,7 +28,7 @@ class MainScreenViewModel : ViewModel(), IntentHandler<MainScreenIntent> {
             }
 
             is ClickedOnExercise -> {
-                _screenState.value = state.copy(navigateToExercise = intent.exercise)
+                _screenState.value = state.copy(navigateToTrainingType = intent.trainingType)
             }
 
             is ClickedOnSignOut -> {
@@ -37,7 +37,7 @@ class MainScreenViewModel : ViewModel(), IntentHandler<MainScreenIntent> {
 
             is NavigationProcessed -> {
                 _screenState.value = state.copy(
-                    navigateToExercise = null,
+                    navigateToTrainingType = null,
                     navigateToMyBody = false,
                     signOut = false,
                     seeAllExercises = false

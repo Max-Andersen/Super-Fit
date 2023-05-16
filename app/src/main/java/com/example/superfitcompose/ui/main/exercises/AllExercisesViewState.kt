@@ -1,7 +1,7 @@
 package com.example.superfitcompose.ui.main.exercises
 
-import com.example.superfitcompose.ui.main.Exercise
+import com.example.superfitcompose.data.network.models.TrainingType
 
 data class AllExercisesViewState(
-    val navigateToExercise: Exercise? = null
+    val navigateToTrainingType: TrainingType? = null
 )

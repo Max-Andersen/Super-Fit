@@ -1,12 +1,15 @@
 package com.example.superfitcompose.ui.auth.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.superfitcompose.IntentHandler
 import com.example.superfitcompose.domain.usecases.ValidationUseCase
-import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.*
+import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.EnterCodeButtonClicked
+import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.ErrorProcessed
+import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.NavigationProcessed
+import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.SignUpNavigationButtonClicked
+import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.UserNameInput
 
 
 class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
@@ -18,37 +21,32 @@ class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
         _screenState.value = LoginViewState()
     }
 
-    private var password = ""
-
-
-
     override fun processIntent(intent: LoginScreenIntent) {
+        val state = _screenState.value ?: return
         when (intent) {
             is UserNameInput -> {
-                _screenState.value = _screenState.value!!.copy(login = intent.userName)
+                _screenState.value = state.copy(login = intent.userName)
             }
 
             is EnterCodeButtonClicked -> {
-                val validationAnswer = ValidationUseCase(_screenState.value!!.login)()
-                Log.d("!", validationAnswer)
-                Log.d("!", validationAnswer.isEmpty().toString())
+                val validationAnswer = ValidationUseCase(email = state.login.trim())()
                 if (validationAnswer.isEmpty()){
-                    _screenState.value = _screenState.value!!.copy(navigateToEnterPassword = true, navigateToRegister = false)
+                    _screenState.value = state.copy(navigateToEnterPassword = true, navigateToRegister = false)
                 } else{
-                    _screenState.value = _screenState.value!!.copy(errorMessage = validationAnswer)
+                    _screenState.value = state.copy(errorMessage = validationAnswer.dropLast(2))
                 }
             }
 
             is SignUpNavigationButtonClicked -> {
-                _screenState.value = _screenState.value!!.copy(navigateToEnterPassword = false, navigateToRegister = true)
+                _screenState.value = state.copy(navigateToEnterPassword = false, navigateToRegister = true)
             }
 
             is ErrorProcessed -> {
-                _screenState.value = _screenState.value!!.copy(errorMessage = "")
+                _screenState.value = state.copy(errorMessage = "")
             }
 
             is NavigationProcessed -> {
-                _screenState.value = _screenState.value!!.copy(navigateToEnterPassword = false, navigateToRegister = false)
+                _screenState.value = state.copy(navigateToEnterPassword = false, navigateToRegister = false)
             }
         }
     }

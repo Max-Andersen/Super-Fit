@@ -1,11 +1,9 @@
 package com.example.superfitcompose.ui.main.exercises
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.superfitcompose.IntentHandler
-import com.example.superfitcompose.ui.auth.login.LoginPreview
 import com.example.superfitcompose.ui.main.exercises.AllExercisesIntent.ClickedOnExercise
 import com.example.superfitcompose.ui.main.exercises.AllExercisesIntent.NavigationProcessed
 
@@ -21,11 +19,11 @@ class AllExercisesViewModel : ViewModel(), IntentHandler<AllExercisesIntent> {
 
         when (intent) {
             is ClickedOnExercise -> {
-                _screenState.value = state.copy(navigateToExercise = intent.exercise)
+                _screenState.value = state.copy(navigateToTrainingType = intent.trainingType)
             }
 
             is NavigationProcessed -> {
-                _screenState.value = state.copy(navigateToExercise = null)
+                _screenState.value = state.copy(navigateToTrainingType = null)
             }
         }
     }

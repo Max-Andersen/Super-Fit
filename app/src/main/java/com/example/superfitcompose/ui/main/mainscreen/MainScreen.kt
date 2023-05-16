@@ -46,8 +46,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.Routes
-import com.example.superfitcompose.ui.main.Exercise
 import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.example.superfitcompose.ui.theme.greyTint
@@ -76,14 +76,10 @@ fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = vi
         // Todo navigation
     }
 
-    if (viewState.navigateToExercise != null) {
-        // Todo navigation
-        val destination = viewState.navigateToExercise
-        Toast.makeText(
-            LocalContext.current,
-            "Navigation to $destination",
-            Toast.LENGTH_SHORT
-        ).show()
+    if (viewState.navigateToTrainingType != null) {
+        val destination = viewState.navigateToTrainingType
+        viewModel.processIntent(MainScreenIntent.NavigationProcessed)
+        navController.navigate(Routes.EXERCISE + "/" + destination)
     }
 
     Column(
@@ -172,9 +168,21 @@ fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
 
 
 
-        ExerciseCard(type = stringResource(id = R.string.push_ups)) { sendIntent(MainScreenIntent.ClickedOnExercise(exercise = Exercise.Push_Ups)) }
+        ExerciseCard(type = stringResource(id = R.string.push_ups)) {
+            sendIntent(
+                MainScreenIntent.ClickedOnExercise(
+                    trainingType = TrainingType.PUSH_UP
+                )
+            )
+        }
 
-        ExerciseCard(type = stringResource(id = R.string.plank)) { sendIntent(MainScreenIntent.ClickedOnExercise(exercise = Exercise.Plank)) }
+        ExerciseCard(type = stringResource(id = R.string.plank)) {
+            sendIntent(
+                MainScreenIntent.ClickedOnExercise(
+                    trainingType = TrainingType.PLANK
+                )
+            )
+        }
 
 
 

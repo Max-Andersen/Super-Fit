@@ -1,12 +1,12 @@
 package com.example.superfitcompose.ui.main.mainscreen
 
-import com.example.superfitcompose.ui.main.Exercise
+import com.example.superfitcompose.data.network.models.TrainingType
 
 sealed class MainScreenIntent {
     object ClickedOnMyBodyCard: MainScreenIntent()
     object ClickedOnSeeAllExercises: MainScreenIntent()
 
-    data class ClickedOnExercise(val exercise: Exercise): MainScreenIntent()
+    data class ClickedOnExercise(val trainingType: TrainingType): MainScreenIntent()
 
     object ClickedOnSignOut: MainScreenIntent()
 

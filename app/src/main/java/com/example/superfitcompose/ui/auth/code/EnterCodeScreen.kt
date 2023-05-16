@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.auth.code
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
@@ -85,9 +84,12 @@ fun EnterCodeScreen(
         }
 
         if (viewState.navigateToMainScreen){
-            Toast.makeText(LocalContext.current, "Navigate to main screen", Toast.LENGTH_SHORT).show()
             viewModel.processIntent(CodeInputScreenIntent.NavigationProcessed)
-            navController.navigate(Routes.MAIN_SCREEN)
+            navController.navigate(Routes.MAIN_SCREEN){
+                popUpTo(
+                    navController.graph.id
+                )
+            }
         }
 
 

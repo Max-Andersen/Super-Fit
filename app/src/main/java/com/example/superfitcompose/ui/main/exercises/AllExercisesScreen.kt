@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.main.exercises
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
-import com.example.superfitcompose.ui.main.Exercise
+import com.example.superfitcompose.data.network.models.TrainingType
+import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 
@@ -46,15 +45,10 @@ fun AllExercisesScreen(
 
     val screenState by viewModel.getScreenState().observeAsState(AllExercisesViewState())
 
-    if (screenState.navigateToExercise != null) {
-        val destination = screenState.navigateToExercise
+    if (screenState.navigateToTrainingType != null) {
+        val destination = screenState.navigateToTrainingType
         viewModel.processIntent(AllExercisesIntent.NavigationProcessed)
-        // Todo navigation
-        Toast.makeText(
-            LocalContext.current,
-            "Navigation to $destination",
-            Toast.LENGTH_SHORT
-        ).show()
+        navController.navigate(Routes.EXERCISE + "/" + destination)
     }
 
     Column(
@@ -116,35 +110,35 @@ fun AllExercisesScreenFilling(cardClicked: (AllExercisesIntent) -> Unit) {
         ExerciseCard(type = stringResource(id = R.string.push_ups)) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
-                    Exercise.Push_Ups
+                    TrainingType.PUSH_UP
                 )
             )
         }
         ExerciseCard(type = stringResource(id = R.string.plank)) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
-                    Exercise.Plank
+                    TrainingType.PLANK
                 )
             )
         }
         ExerciseCard(type = stringResource(id = R.string.squats)) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
-                    Exercise.Squats
+                    TrainingType.SQUATS
                 )
             )
         }
         ExerciseCard(type = stringResource(id = R.string.crunch)) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
-                    Exercise.Crunch
+                    TrainingType.CRUNCH
                 )
             )
         }
         ExerciseCard(type = stringResource(id = R.string.running)) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
-                    Exercise.Running
+                    TrainingType.RUNNING
                 )
             )
         }
