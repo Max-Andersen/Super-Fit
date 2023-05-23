@@ -3,8 +3,7 @@ package com.example.superfitcompose.domain.usecases
 import com.example.superfitcompose.SharedPreferencesTypes
 import com.example.superfitcompose.data.local.SharedPreferences
 
-class SharedPreferencesInteractor {
-    private val sharedPreferences = SharedPreferences
+class SharedPreferencesInteractor(private val sharedPreferences: SharedPreferences) {
 
     private val types = SharedPreferencesTypes
 

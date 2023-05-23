@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.auth.login
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -37,15 +36,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.superfitcompose.R
 import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = viewModel(), navController: NavHostController) {
+fun LoginScreen(viewModel: LoginViewModel = koinViewModel(), navController: NavHostController) {
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -73,7 +72,7 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(), navController: NavHostC
 
         if (viewState.navigateToEnterPassword) {
             viewModel.processIntent(LoginScreenIntent.NavigationProcessed)
-            navController.navigate(Routes.ENTER_PASSWORD+ "/" + viewState.login)
+            navController.navigate(Routes.ENTER_PASSWORD + "/" + viewState.login)
         }
 
         if (viewState.navigateToRegister) {
@@ -86,7 +85,6 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(), navController: NavHostC
             sendIntent = viewModel::processIntent
         )
     }
-
 
 
 }

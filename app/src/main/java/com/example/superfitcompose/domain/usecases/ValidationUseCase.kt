@@ -1,17 +1,15 @@
 package com.example.superfitcompose.domain.usecases
 
-import android.util.Log
-
-class ValidationUseCase(
-    private val email: String,
-    private val code: String? = null,
-    private val codeConfirmation: String? = null
-) {
+class ValidationUseCase {
     private fun String.isEmailValid(): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
     }
 
-    operator fun invoke(): String {
+    operator fun invoke(
+        email: String,
+        code: String? = null,
+        codeConfirmation: String? = null
+    ): String {
         var answer = ""
 
         if ((code != null || codeConfirmation != null) && code != codeConfirmation) {
@@ -22,18 +20,17 @@ class ValidationUseCase(
             answer += "Code can not contains any symbols except numbers\n"
         }
 
-        Log.d("!!!!!", code.toString())
-        Log.d("!!!!!", codeConfirmation.toString())
-
-        if (code != null && codeConfirmation != null){
-            if (!"\\d{4}".toRegex().matches(code) || !"\\d{4}".toRegex().matches(codeConfirmation)) {
+        if (code != null && codeConfirmation != null) {
+            if (!"\\d{4}".toRegex().matches(code) || !"\\d{4}".toRegex()
+                    .matches(codeConfirmation)
+            ) {
                 answer += "Possible length of code is 4 digits\n"
             }
         }
 
 
 
-        if (!email.isEmailValid()) {
+        if (!email.trim().isEmailValid()) {
             answer += "Email is incorrect!\n"
         }
 

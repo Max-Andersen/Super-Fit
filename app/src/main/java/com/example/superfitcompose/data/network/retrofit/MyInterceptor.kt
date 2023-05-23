@@ -6,14 +6,15 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-class MyInterceptor : Interceptor {
+class MyInterceptor(private val sharedPreferencesInteractor: SharedPreferencesInteractor) :
+    Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request: Request.Builder = chain.request().newBuilder().apply {
             addHeader("accept", "application/json")
         }
 
-        val accessToken = SharedPreferencesInteractor().getAccessToken()
-        if (accessToken != ""){
+        val accessToken = sharedPreferencesInteractor.getAccessToken()
+        if (accessToken != "") {
             request.addHeader("Authorization", "Bearer $accessToken")
         }
 

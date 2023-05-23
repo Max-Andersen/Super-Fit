@@ -1,18 +1,18 @@
 package com.example.superfitcompose.data.local
 
 
+import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.example.superfitcompose.MyApplication
 
-object SharedPreferences {
+class SharedPreferences(context: Context) {
 
-    private var masterKey = MasterKey.Builder(MyApplication.applicationContext())
+    private var masterKey = MasterKey.Builder(context)
         .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
         .build()
 
     private var sharedPreferences = EncryptedSharedPreferences.create(
-        MyApplication.applicationContext(),
+        context,
         "secret_shared_prefs",
         masterKey,
         EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,

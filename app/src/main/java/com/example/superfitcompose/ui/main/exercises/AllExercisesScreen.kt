@@ -28,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
@@ -37,11 +36,12 @@ import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AllExercisesScreen(
     navController: NavController,
-    viewModel: AllExercisesViewModel = viewModel()
+    viewModel: AllExercisesViewModel = koinViewModel()
 ) {
 
     val screenState by viewModel.getScreenState().observeAsState(AllExercisesViewState())
@@ -144,7 +144,7 @@ fun AllExercisesScreenFilling(cardClicked: (AllExercisesIntent) -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.size(bottomPadding*2))
+        Spacer(modifier = Modifier.size(bottomPadding * 2))
     }
 }
 

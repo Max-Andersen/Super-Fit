@@ -6,9 +6,9 @@ import com.example.superfitcompose.data.network.models.AuthCredentialDTO
 import com.example.superfitcompose.data.network.models.RefreshTokenDTO
 import com.example.superfitcompose.domain.repositoryinterfaces.AuthRepository
 
-class AuthRepositoryImpl: AuthRepository, BaseRepository() {
+class AuthRepositoryImpl(network: Network): AuthRepository, BaseRepository() {
 
-    private val authApi: AuthApi = Network.getAuthApi()
+    private val authApi: AuthApi = network.getAuthApi()
 
     override fun getRefreshToken(data: AuthCredentialDTO) = apiRequestFlow { authApi.getRefreshToken(data) }
 

@@ -8,5 +8,4 @@ object Routes {
     const val MAIN_SCREEN = "main_screen"
     const val ALL_EXERCISES = "all_exercises_screen"
     const val MY_BODY_DETAILS = "my_body_details_screen"
-
 }

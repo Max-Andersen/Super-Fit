@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
 import com.example.superfitcompose.bottomPadding
@@ -48,15 +47,16 @@ import com.skydoves.orbital.Orbital
 import com.skydoves.orbital.OrbitalScope
 import com.skydoves.orbital.animateSharedElementTransition
 import com.skydoves.orbital.rememberContentWithOrbitalScope
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun EnterCodeScreen(
     email: String,
     navController: NavController,
-    viewModel: CodeInputViewModel = viewModel()
+    viewModel: CodeInputViewModel = koinViewModel()
 ) {
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.processIntent(CodeInputScreenIntent.SetEmail(email))
     }
 
@@ -84,9 +84,9 @@ fun EnterCodeScreen(
             viewModel.processIntent(CodeInputScreenIntent.ErrorProcessed)
         }
 
-        if (viewState.navigateToMainScreen){
+        if (viewState.navigateToMainScreen) {
             viewModel.processIntent(CodeInputScreenIntent.NavigationProcessed)
-            navController.navigate(Routes.MAIN_SCREEN){
+            navController.navigate(Routes.MAIN_SCREEN) {
                 popUpTo(
                     navController.graph.id
                 )
@@ -128,7 +128,11 @@ fun SetCodeInputPlace(sendIntent: (CodeInputScreenIntent) -> Unit) {
     }
 
     Orbital(
-        modifier = Modifier.padding(start = 38.dp, end = 38.dp, bottom = 107.dp + bottomPadding*2),
+        modifier = Modifier.padding(
+            start = 38.dp,
+            end = 38.dp,
+            bottom = 107.dp + bottomPadding * 2
+        ),
         isTransformed = isTransformed.value,
         onStartContent = {
             items.shuffle()

@@ -12,7 +12,8 @@ import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.SignUpNavigat
 import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.UserNameInput
 
 
-class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
+class LoginViewModel(private val validationUseCase: ValidationUseCase) : ViewModel(),
+    IntentHandler<LoginScreenIntent> {
     private val _screenState = MutableLiveData<LoginViewState>()
 
     fun getScreenState(): LiveData<LoginViewState> = _screenState
@@ -29,16 +30,18 @@ class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
             }
 
             is EnterCodeButtonClicked -> {
-                val validationAnswer = ValidationUseCase(email = state.login.trim())()
-                if (validationAnswer.isEmpty()){
-                    _screenState.value = state.copy(navigateToEnterPassword = true, navigateToRegister = false)
-                } else{
+                val validationAnswer = validationUseCase(email = state.login.trim())
+                if (validationAnswer.isEmpty()) {
+                    _screenState.value =
+                        state.copy(navigateToEnterPassword = true, navigateToRegister = false)
+                } else {
                     _screenState.value = state.copy(errorMessage = validationAnswer.dropLast(2))
                 }
             }
 
             is SignUpNavigationButtonClicked -> {
-                _screenState.value = state.copy(navigateToEnterPassword = false, navigateToRegister = true)
+                _screenState.value =
+                    state.copy(navigateToEnterPassword = false, navigateToRegister = true)
             }
 
             is ErrorProcessed -> {
@@ -46,7 +49,8 @@ class LoginViewModel : ViewModel(), IntentHandler<LoginScreenIntent> {
             }
 
             is NavigationProcessed -> {
-                _screenState.value = state.copy(navigateToEnterPassword = false, navigateToRegister = false)
+                _screenState.value =
+                    state.copy(navigateToEnterPassword = false, navigateToRegister = false)
             }
         }
     }

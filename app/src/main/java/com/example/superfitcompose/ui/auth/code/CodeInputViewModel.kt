@@ -17,7 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CodeInputViewModel : ViewModel(), IntentHandler<CodeInputScreenIntent> {
+class CodeInputViewModel(
+    private val getTokensUseCase: GetTokensUseCase,
+    private val sharedPreferencesInteractor: SharedPreferencesInteractor
+) : ViewModel(), IntentHandler<CodeInputScreenIntent> {
 
     private val _screenState = MutableLiveData<CodeEnterViewState>(CodeEnterViewState())
 
@@ -37,21 +40,23 @@ class CodeInputViewModel : ViewModel(), IntentHandler<CodeInputScreenIntent> {
                     viewModelScope.launch {
                         val email = _screenState.value!!.email
 
-                        GetTokensUseCase(email, password)().let { tokens ->
+                        getTokensUseCase(email, password).let { tokens ->
                             when (tokens) {
                                 is ApiResponse.Success -> {
-                                    SharedPreferencesInteractor().updateAccessToken(tokens.data.access)
-                                    SharedPreferencesInteractor().updateRefreshToken(tokens.data.refresh)
+                                    sharedPreferencesInteractor.updateAccessToken(tokens.data.access)
+                                    sharedPreferencesInteractor.updateRefreshToken(tokens.data.refresh)
                                     Log.d("!", "success")
                                     withContext(Dispatchers.Main) {
-                                        _screenState.value = _screenState.value?.copy(navigateToMainScreen = true)
+                                        _screenState.value =
+                                            _screenState.value?.copy(navigateToMainScreen = true)
                                     }
                                 }
 
                                 is ApiResponse.Failure -> {
                                     password = ""
                                     withContext(Dispatchers.Main) {
-                                        _screenState.value = _screenState.value?.copy(errorMessage = tokens.errorMessage)
+                                        _screenState.value =
+                                            _screenState.value?.copy(errorMessage = tokens.errorMessage)
                                     }
                                 }
 

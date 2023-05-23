@@ -11,16 +11,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-object Network {
-    const val BASE_URL = "http://fitness.wsmob.xyz:22169/api/"
+class Network(
+    private val myAuthenticator: MyAuthenticator,
+    private val myInterceptor: MyInterceptor
+) {
+    val BASE_URL = "http://fitness.wsmob.xyz:22169/api/"
 
     private fun getHttpClient(): OkHttpClient {
         val client = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(60, TimeUnit.SECONDS)
             writeTimeout(60, TimeUnit.SECONDS)
-            addInterceptor(MyInterceptor())
-            authenticator(MyAuthenticator())
+            addInterceptor(myInterceptor)
+            authenticator(myAuthenticator)
             val logLevel = HttpLoggingInterceptor.Level.BODY
             addInterceptor(HttpLoggingInterceptor().setLevel(logLevel))
         }

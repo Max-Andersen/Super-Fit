@@ -42,7 +42,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
@@ -52,9 +51,10 @@ import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.example.superfitcompose.ui.theme.greyTint
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = viewModel()) {
+fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = koinViewModel()) {
 
     val viewState by viewModel.getViewState().observeAsState(MainScreenViewState())
 

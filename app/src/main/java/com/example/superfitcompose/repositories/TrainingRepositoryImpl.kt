@@ -5,8 +5,8 @@ import com.example.superfitcompose.data.network.api.TrainingApi
 import com.example.superfitcompose.data.network.models.TrainingDTO
 import com.example.superfitcompose.domain.repositoryinterfaces.TrainingRepository
 
-class TrainingRepositoryImpl: TrainingRepository, BaseRepository() {
-    private val trainingApi: TrainingApi = Network.getTrainingApi()
+class TrainingRepositoryImpl(network: Network): TrainingRepository, BaseRepository() {
+    private val trainingApi: TrainingApi = network.getTrainingApi()
 
     override fun getTrainings() = apiRequestFlow { trainingApi.getTrainings() }
 

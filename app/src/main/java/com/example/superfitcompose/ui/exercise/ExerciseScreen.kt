@@ -7,6 +7,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,13 +41,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.vmadalin.easypermissions.EasyPermissions
+import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
 internal var lastUpdate = 0L
@@ -57,7 +60,7 @@ internal var valueZ = 0f
 internal var movementDown = false
 internal var movementUp = false
 
-internal var sensitivity = 2f
+internal var sensitivity = 1.5f
 
 internal var sensorDelay = 500
 
@@ -65,7 +68,7 @@ internal var sensorDelay = 500
 fun ExerciseScreen(
     navController: NavController,
     exerciseType: TrainingType,
-    viewModel: ExerciseViewModel = viewModel()
+    viewModel: ExerciseViewModel = koinViewModel()
 ) {
 
     val isActivityRecognitionPermissionFree = false
@@ -86,45 +89,47 @@ fun ExerciseScreen(
     val sensorManager =
         LocalContext.current.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
+    val content = LocalContext.current
+
+    var previousTotalSteps = 0f
+
+    val movementListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val curTime = System.currentTimeMillis()
+
+            if (curTime - lastUpdate > sensorDelay) {
+                lastUpdate = curTime
+                processSensorMovement(event, exerciseType, content) {
+                    viewModel.processIntent(
+                        ExerciseIntent.ExerciseStepDone()
+                    )
+                }
+
+            }
+        }
+
+        override fun onAccuracyChanged(p0: Sensor, p1: Int) {}
+    }
+
+    val stepCountListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val totalSteps = event.values[0]
+            if (previousTotalSteps == 0f) previousTotalSteps = totalSteps
+
+            val currentSteps = totalSteps.toInt() - previousTotalSteps
+            previousTotalSteps = totalSteps
+
+            viewModel.processIntent(
+                ExerciseIntent.ExerciseStepDone(currentSteps.toInt())
+            )
+        }
+
+        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.processIntent(ExerciseIntent.LoadExerciseData(exerciseType))
-
-        val movementListener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent) {
-                val curTime = System.currentTimeMillis()
-
-                if (curTime - lastUpdate > sensorDelay) {
-                    lastUpdate = curTime
-                    processSensorMovement(event, exerciseType) {
-                        viewModel.processIntent(
-                            ExerciseIntent.ExerciseStepDone()
-                        )
-                    }
-
-                }
-            }
-
-            override fun onAccuracyChanged(p0: Sensor, p1: Int) {}
-        }
-
-        var previousTotalSteps = 0f
-
-        val stepCountListener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent) {
-                val totalSteps = event.values[0]
-                if (previousTotalSteps == 0f) previousTotalSteps = totalSteps
-
-                val currentSteps = totalSteps.toInt() - previousTotalSteps
-                previousTotalSteps = totalSteps
-
-                viewModel.processIntent(
-                    ExerciseIntent.ExerciseStepDone(currentSteps.toInt())
-                )
-            }
-
-            override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
-
-        }
 
         when (exerciseType) {
             TrainingType.PLANK -> {
@@ -138,16 +143,24 @@ fun ExerciseScreen(
             TrainingType.RUNNING -> {
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
                 sensorManager.registerListener(
-                    stepCountListener, sensor, SensorManager.SENSOR_DELAY_FASTEST
+                    stepCountListener, sensor, SensorManager.SENSOR_DELAY_NORMAL
                 )
             }
 
             else -> { // Push-Ups or Squats, both need ACCELERATION
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
                 sensorManager.registerListener(
-                    movementListener, sensor, SensorManager.SENSOR_DELAY_UI
+                    movementListener, sensor, SensorManager.SENSOR_DELAY_FASTEST
                 )
             }
+        }
+    }
+
+
+    DisposableEffect(key1 = true) {
+        onDispose {
+            sensorManager.unregisterListener(movementListener)
+            sensorManager.unregisterListener(stepCountListener)
         }
     }
 
@@ -161,7 +174,7 @@ fun ExerciseScreen(
                 .background(MaterialTheme.colorScheme.secondary),
             contentAlignment = Alignment.Center
         ) {
-            Column {
+            Column(modifier = Modifier.padding(bottom = bottomPadding * 2)) {
                 Text(
                     text = with(Locale.ROOT) {
                         exerciseType.name.lowercase(this)
@@ -191,7 +204,7 @@ fun ExerciseScreen(
 }
 
 fun processSensorMovement(
-    event: SensorEvent, exerciseType: TrainingType, processIntent: () -> Unit
+    event: SensorEvent, exerciseType: TrainingType, context: Context, processIntent: () -> Unit,
 ) {
     valueY = event.values[1]
     valueZ = event.values[2]
@@ -204,9 +217,12 @@ fun processSensorMovement(
         if (valueY > sensitivity) {
             movementUp = true
         }
+        //Toast.makeText(context, "$movementDown  $movementUp", Toast.LENGTH_SHORT).show()
+
     }
 
     if (exerciseType == TrainingType.PUSH_UP) {
+        Log.d("SENSOR", "$movementDown  $movementUp")
         if (valueZ < -sensitivity) {
             movementDown = true
         }
@@ -214,7 +230,10 @@ fun processSensorMovement(
         if (valueZ > sensitivity) {
             movementUp = true
         }
+        //Toast.makeText(context, "$movementDown  $movementUp", Toast.LENGTH_SHORT).show()
+
     }
+
 
     if (movementDown && movementUp) {
         processIntent.invoke()

@@ -37,14 +37,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
 import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.ui.Routes
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = viewModel()) {
+fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = koinViewModel()) {
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -71,16 +71,16 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
             viewModel.processIntent(RegisterScreenIntent.ErrorProcessed)
         }
 
-        if (viewState.navigateMainScreen){
+        if (viewState.navigateMainScreen) {
             viewModel.processIntent(RegisterScreenIntent.NavigationProcessed)
-            navController.navigate(Routes.MAIN_SCREEN){
+            navController.navigate(Routes.MAIN_SCREEN) {
                 popUpTo(
                     navController.graph.id
                 )
             }
         }
 
-        if (viewState.navigateToLogin){
+        if (viewState.navigateToLogin) {
             viewModel.processIntent(RegisterScreenIntent.NavigationProcessed)
             navController.navigate(Routes.LOGIN)
         }

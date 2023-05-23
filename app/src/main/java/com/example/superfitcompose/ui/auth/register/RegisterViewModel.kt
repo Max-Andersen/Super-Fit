@@ -27,7 +27,12 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
+class RegisterViewModel(
+    private val validationUseCase: ValidationUseCase,
+    private val getTokensUseCase: GetTokensUseCase,
+    private val registerUseCase: RegisterUseCase,
+    private val sharedPreferencesInteractor: SharedPreferencesInteractor
+) : ViewModel(), IntentHandler<RegisterScreenIntent> {
 
     private val _screenState = MutableLiveData<RegisterViewState>()
 
@@ -60,7 +65,7 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
                 val code = state.code.trim()
                 val codeConfirmation = state.codeConfirmation.trim()
 
-                val validationAnswer = ValidationUseCase(email, code, codeConfirmation)()
+                val validationAnswer = validationUseCase(email, code, codeConfirmation)
 
                 if (validationAnswer.isEmpty()) {
                     viewModelScope.launch {
@@ -68,11 +73,11 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
                             registerRequest(email, code)
 
                         if (registerAnswer is ApiResponse.Success) {
-                            GetTokensUseCase(email, code)().let { tokens ->
+                            getTokensUseCase(email, code).let { tokens ->
                                 when (tokens) {
                                     is ApiResponse.Success -> {
-                                        SharedPreferencesInteractor().updateAccessToken(tokens.data.access)
-                                        SharedPreferencesInteractor().updateRefreshToken(tokens.data.refresh)
+                                        sharedPreferencesInteractor.updateAccessToken(tokens.data.access)
+                                        sharedPreferencesInteractor.updateRefreshToken(tokens.data.refresh)
                                         withContext(Dispatchers.Main) {
                                             _screenState.value =
                                                 state.copy(navigateMainScreen = true)
@@ -120,7 +125,7 @@ class RegisterViewModel : ViewModel(), IntentHandler<RegisterScreenIntent> {
     }
 
     private suspend fun registerRequest(email: String, code: String): ApiResponse<SimpleMessage> {
-        return RegisterUseCase(AuthCredential(email, code))().last().let {
+        return registerUseCase(AuthCredential(email, code)).last().let {
             when (it) {
                 is ApiResponse.Loading -> {
                     return@let ApiResponse.Loading

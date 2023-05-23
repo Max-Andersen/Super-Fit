@@ -28,8 +28,8 @@ import kotlinx.datetime.todayIn
 import kotlin.properties.Delegates
 
 class ExerciseViewModel(
-    private val getTrainingHistoryUseCase: GetTrainingHistoryUseCase = GetTrainingHistoryUseCase(),
-    private val saveExerciseProgressUseCase: SaveExerciseProgressUseCase = SaveExerciseProgressUseCase()
+    private val getTrainingHistoryUseCase: GetTrainingHistoryUseCase,
+    private val saveExerciseProgressUseCase: SaveExerciseProgressUseCase
 ) :
     ViewModel(), IntentHandler<ExerciseIntent> {
 
