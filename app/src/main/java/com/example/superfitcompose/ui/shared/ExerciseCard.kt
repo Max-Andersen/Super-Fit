@@ -20,29 +20,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.superfitcompose.R
+import com.example.superfitcompose.data.network.models.TrainingType
 
 @Composable
-fun ExerciseCard(type: String, cardClick: () -> Unit) {
+fun ExerciseCard(type: TrainingType, cardClick: () -> Unit) {
     val data = when (type) {
-        stringResource(id = R.string.push_ups) -> Pair(
+        TrainingType.PUSH_UP -> Pair(
             stringResource(id = R.string.push_ups_description), painterResource(
                 id = R.drawable.mask_group_push_ups
             )
         )
 
-        stringResource(id = R.string.plank) -> Pair(
+        TrainingType.PLANK -> Pair(
             stringResource(id = R.string.plank_description), painterResource(
                 id = R.drawable.mask_group_plank
             )
         )
 
-        stringResource(id = R.string.squats) -> Pair(
+        TrainingType.SQUATS -> Pair(
             stringResource(id = R.string.squats_description), painterResource(
                 id = R.drawable.mask_group_squats
             )
         )
 
-        stringResource(id = R.string.crunch) -> Pair(
+        TrainingType.CRUNCH -> Pair(
             stringResource(id = R.string.crunch_description), painterResource(
                 id = R.drawable.mask_group_crunch
             )
@@ -72,7 +73,7 @@ fun ExerciseCard(type: String, cardClick: () -> Unit) {
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp)
             ) {
                 Text(
-                    text = type,
+                    text = type.name,
                     style = MaterialTheme.typography.headlineSmall,
                     fontSize = 14.sp
                 )

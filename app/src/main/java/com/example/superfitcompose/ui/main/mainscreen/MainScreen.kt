@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
 import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.data.network.models.TrainingType
+import com.example.superfitcompose.domain.models.BodyParameters
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.ExerciseCard
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
@@ -56,16 +58,16 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = koinViewModel()) {
 
+    LaunchedEffect(key1 = true){
+        viewModel.processIntent(MainScreenIntent.GetBodyParams)
+        viewModel.processIntent(MainScreenIntent.GetLastTraining)
+    }
+
     val viewState by viewModel.getViewState().observeAsState(MainScreenViewState())
 
     if (viewState.navigateToMyBody) {
         viewModel.processIntent(MainScreenIntent.NavigationProcessed)
-        // Todo navigation
-        Toast.makeText(
-            LocalContext.current,
-            "Navigation to My body",
-            Toast.LENGTH_SHORT
-        ).show()
+        navController.navigate(Routes.MY_BODY_DETAILS)
     }
 
     if (viewState.seeAllExercises) {
@@ -74,7 +76,8 @@ fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = ko
     }
 
     if (viewState.signOut) {
-        // Todo navigation
+        viewModel.processIntent(MainScreenIntent.NavigationProcessed)
+        navController.navigate(Routes.LOGIN)
     }
 
     if (viewState.navigateToTrainingType != null) {
@@ -117,14 +120,18 @@ fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = ko
             )
         }
 
-        MainScreenFilling(viewModel::processIntent)
+        MainScreenFilling(viewState.bodyParams, viewState.lastTrainings, viewModel::processIntent)
 
     }
 }
 
 
 @Composable
-fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
+fun MainScreenFilling(
+    bodyParameters: BodyParameters?,
+    lastTrainings: Pair<TrainingType?, TrainingType?>?,
+    sendIntent: (MainScreenIntent) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -141,7 +148,10 @@ fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
             color = Color.Black
         )
 
-        MyBodyCard { sendIntent(MainScreenIntent.ClickedOnMyBodyCard) }
+        MyBodyCard(
+            bodyParameters?.weight,
+            bodyParameters?.height
+        ) { sendIntent(MainScreenIntent.ClickedOnMyBodyCard) }
 
         Spacer(modifier = Modifier.size(8.dp))
 
@@ -167,24 +177,43 @@ fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
 
         }
 
+        if (lastTrainings != null) {
+            lastTrainings.first?.let { type ->
+                ExerciseCard(type = type) {
+                    sendIntent(
+                        MainScreenIntent.ClickedOnExercise(
+                            trainingType = type
+                        )
+                    )
+                }
+            }
 
-
-        ExerciseCard(type = stringResource(id = R.string.push_ups)) {
-            sendIntent(
-                MainScreenIntent.ClickedOnExercise(
-                    trainingType = TrainingType.PUSH_UP
+            lastTrainings.second?.let { type ->
+                ExerciseCard(type = type) {
+                    sendIntent(
+                        MainScreenIntent.ClickedOnExercise(
+                            trainingType = type
+                        )
+                    )
+                }
+            }
+        } else {
+            ExerciseCard(type = TrainingType.PUSH_UP) {
+                sendIntent(
+                    MainScreenIntent.ClickedOnExercise(
+                        trainingType = TrainingType.PUSH_UP
+                    )
                 )
-            )
-        }
+            }
 
-        ExerciseCard(type = stringResource(id = R.string.plank)) {
-            sendIntent(
-                MainScreenIntent.ClickedOnExercise(
-                    trainingType = TrainingType.PLANK
+            ExerciseCard(type = TrainingType.PLANK) {
+                sendIntent(
+                    MainScreenIntent.ClickedOnExercise(
+                        trainingType = TrainingType.PLANK
+                    )
                 )
-            )
+            }
         }
-
 
 
         Spacer(modifier = Modifier.weight(1f))
@@ -215,7 +244,7 @@ fun MainScreenFilling(sendIntent: (MainScreenIntent) -> Unit) {
 }
 
 @Composable
-fun MyBodyCard(clicked: () -> Unit) {
+fun MyBodyCard(weight: Int?, height: Int?, clicked: () -> Unit) {
     Box(
         modifier = Modifier
             .background(
@@ -262,7 +291,7 @@ fun MyBodyCard(clicked: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "76 kg",
+                        text = weight?.toString() ?: stringResource(id = R.string.undefined),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 14.sp
                     )
@@ -277,7 +306,7 @@ fun MyBodyCard(clicked: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "178 cm",
+                        text = height?.toString() ?: stringResource(id = R.string.undefined),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 14.sp
                     )

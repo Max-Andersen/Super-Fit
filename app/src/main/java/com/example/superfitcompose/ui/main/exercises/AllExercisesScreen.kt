@@ -108,35 +108,35 @@ fun AllExercisesScreenFilling(cardClicked: (AllExercisesIntent) -> Unit) {
             color = Color.Black
         )
 
-        ExerciseCard(type = stringResource(id = R.string.push_ups)) {
+        ExerciseCard(TrainingType.PUSH_UP) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
                     TrainingType.PUSH_UP
                 )
             )
         }
-        ExerciseCard(type = stringResource(id = R.string.plank)) {
+        ExerciseCard(TrainingType.PLANK) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
                     TrainingType.PLANK
                 )
             )
         }
-        ExerciseCard(type = stringResource(id = R.string.squats)) {
+        ExerciseCard(TrainingType.SQUATS) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
                     TrainingType.SQUATS
                 )
             )
         }
-        ExerciseCard(type = stringResource(id = R.string.crunch)) {
+        ExerciseCard(TrainingType.CRUNCH) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
                     TrainingType.CRUNCH
                 )
             )
         }
-        ExerciseCard(type = stringResource(id = R.string.running)) {
+        ExerciseCard(TrainingType.RUNNING) {
             cardClicked(
                 AllExercisesIntent.ClickedOnExercise(
                     TrainingType.RUNNING

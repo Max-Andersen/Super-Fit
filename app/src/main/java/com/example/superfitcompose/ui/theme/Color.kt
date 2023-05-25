@@ -8,6 +8,10 @@ val OnBackground = Color(0xFFC6C6C6)
 
 val greyTint = Color(0xFF666666)
 
+val Alert = Color(0xFF424242)
+val DialogHint = Color(0xFFF2F2F2)
+
+val Purple2 = Color(0xFFBB6BD9)
 
 val Surface = Color(0xFFB461F5)
 

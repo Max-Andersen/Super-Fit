@@ -25,10 +25,24 @@
 
 
     <string name="my_body">My body</string>
+    <string name="undefined">Undefined</string>
+    <string name="undefined_line">--</string>
     <string name="details">Details</string>
     <string name="last_exercises">Last exercises</string>
     <string name="exercises">Exercises</string>
     <string name="see_all">See all</string>
+
+    <string name="edit">Edit</string>
+    <string name="my_progress">My Progress</string>
+    <string name="train_progress">Train progress</string>
+    <string name="statistics">Statistics</string>
+
+    <string name="change_body_param">Change your %1s</string>
+    <string name="new_value">New value</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="change">Change</string>
+
 
 
     <string name="push_ups">Push-Ups</string>

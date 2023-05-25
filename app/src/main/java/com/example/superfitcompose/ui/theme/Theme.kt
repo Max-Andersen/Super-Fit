@@ -14,7 +14,10 @@ private val ColorScheme = lightColorScheme(
     onPrimary = White,
     secondary = Background,
     onSecondary = OnBackground,
-    surface = Surface
+    surface = Surface,
+    error = Alert,
+    onError = Purple2,
+    errorContainer = DialogHint
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
