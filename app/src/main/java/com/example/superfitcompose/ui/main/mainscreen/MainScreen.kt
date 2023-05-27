@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.main.mainscreen
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = koinViewModel()) {
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.processIntent(MainScreenIntent.GetBodyParams)
         viewModel.processIntent(MainScreenIntent.GetLastTraining)
     }
@@ -291,7 +289,9 @@ fun MyBodyCard(weight: Int?, height: Int?, clicked: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = weight?.toString() ?: stringResource(id = R.string.undefined),
+                        text = weight?.let {
+                            stringResource(id = R.string.weight).format(it.toString())
+                        } ?: stringResource(id = R.string.undefined),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 14.sp
                     )
@@ -306,7 +306,9 @@ fun MyBodyCard(weight: Int?, height: Int?, clicked: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = height?.toString() ?: stringResource(id = R.string.undefined),
+                        text = height?.let {
+                            stringResource(id = R.string.height).format(it.toString())
+                        } ?: stringResource(id = R.string.undefined),
                         style = MaterialTheme.typography.headlineSmall,
                         fontSize = 14.sp
                     )

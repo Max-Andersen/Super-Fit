@@ -78,6 +78,9 @@ class RegisterViewModel(
                                     is ApiResponse.Success -> {
                                         sharedPreferencesInteractor.updateAccessToken(tokens.data.access)
                                         sharedPreferencesInteractor.updateRefreshToken(tokens.data.refresh)
+                                        sharedPreferencesInteractor.updateUserLogin(email)
+                                        sharedPreferencesInteractor.updateUserPassword(code)
+
                                         withContext(Dispatchers.Main) {
                                             _screenState.value =
                                                 state.copy(navigateMainScreen = true)

@@ -5,6 +5,7 @@ import com.example.superfitcompose.data.network.models.LoginDTO
 import com.example.superfitcompose.data.network.models.SimpleMessageDTO
 import com.example.superfitcompose.data.network.models.PhotoIdDTO
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,12 +29,11 @@ interface ProfileApi {
     suspend fun getBodyPhotoIds(): Response<List<PhotoIdDTO>>
 
     @Multipart
-    @GET("profile/photos")
-    suspend fun uploadBodyPhoto(@Part image: MultipartBody.Part): Response<PhotoIdDTO>
+    @POST("profile/photos")
+    suspend fun uploadBodyPhoto(@Part file: MultipartBody.Part): Response<PhotoIdDTO>
 
-    @Multipart
     @GET("profile/photos/{id}")
-    suspend fun downloadBodyPhoto(@Path("id") id : String): Response<MultipartBody.Part>
+    suspend fun downloadBodyPhoto(@Path("id") id : String): Response<ResponseBody>
 
     @GET("profile/photos/{id}")
     suspend fun removeBodyPhoto(@Path("id") id : String): Response<SimpleMessageDTO>

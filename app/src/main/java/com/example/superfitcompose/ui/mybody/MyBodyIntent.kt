@@ -1,9 +1,9 @@
 package com.example.superfitcompose.ui.mybody
 
-sealed class MyBodyIntent{
-    object GetBodyParams: MyBodyIntent()
+import android.net.Uri
 
-    object GetLastImages: MyBodyIntent()
+sealed class MyBodyIntent{
+    object LoadData: MyBodyIntent()
 
     object ClickedOnUpdateWeight: MyBodyIntent()
 
@@ -13,9 +13,22 @@ sealed class MyBodyIntent{
 
     data class EnterWeight(val weight: Int): MyBodyIntent()
 
+    object CloseEnterHeight: MyBodyIntent()
+
+    object CloseEnterWeight: MyBodyIntent()
+
+    data class SaveBodyParams(val type: BodyParamsTypes): MyBodyIntent()
+
     object ClickedOnSeeAllProgress: MyBodyIntent()
 
+
     object ClickedOnAddImage: MyBodyIntent()
+
+    data class NewImageSelected(val uri: Uri?): MyBodyIntent()
+
+    object SaveNewImage: MyBodyIntent()
+
+    object ClosePhotoSelect: MyBodyIntent()
 
     object ClickedOnTrainProgress: MyBodyIntent()
 

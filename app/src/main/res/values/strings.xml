@@ -33,6 +33,11 @@
     <string name="see_all">See all</string>
 
     <string name="edit">Edit</string>
+
+    <string name="weight">%1s kg</string>
+    <string name="height">%1s cm</string>
+
+
     <string name="my_progress">My Progress</string>
     <string name="train_progress">Train progress</string>
     <string name="statistics">Statistics</string>

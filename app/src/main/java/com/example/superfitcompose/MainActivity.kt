@@ -82,7 +82,6 @@ fun LaunchScreen(navController: NavController) {
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
         //val sharedPrefs: SharedPreferencesInteractor by inject()
-        Log.d("!!!!", "ENTER")
         //Log.d("!!!!", sharedPrefs.getAccessToken())
         //if (sharedPrefs.getAccessToken() != "") { // Todo(normal logic)
         //navController.navigate(Routes.LOGIN)

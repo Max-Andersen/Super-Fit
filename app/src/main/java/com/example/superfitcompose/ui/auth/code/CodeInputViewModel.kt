@@ -45,6 +45,8 @@ class CodeInputViewModel(
                                 is ApiResponse.Success -> {
                                     sharedPreferencesInteractor.updateAccessToken(tokens.data.access)
                                     sharedPreferencesInteractor.updateRefreshToken(tokens.data.refresh)
+                                    sharedPreferencesInteractor.updateUserLogin(email)
+                                    sharedPreferencesInteractor.updateUserPassword(password)
                                     Log.d("!", "success")
                                     withContext(Dispatchers.Main) {
                                         _screenState.value =

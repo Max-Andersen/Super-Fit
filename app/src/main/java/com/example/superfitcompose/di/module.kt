@@ -1,24 +1,13 @@
 package com.example.superfitcompose.di
 
+import com.example.superfitcompose.MyApplication
 import com.example.superfitcompose.data.local.SharedPreferences
 import com.example.superfitcompose.data.network.Network
 import com.example.superfitcompose.data.network.retrofit.MyAuthenticator
 import com.example.superfitcompose.data.network.retrofit.MyInterceptor
-import com.example.superfitcompose.domain.repositoryinterfaces.AuthRepository
-import com.example.superfitcompose.domain.repositoryinterfaces.ProfileRepository
-import com.example.superfitcompose.domain.repositoryinterfaces.TrainingRepository
-import com.example.superfitcompose.domain.usecases.GetAccessTokenUseCase
-import com.example.superfitcompose.domain.usecases.GetBodyParamsUseCase
-import com.example.superfitcompose.domain.usecases.GetRefreshTokenUseCase
-import com.example.superfitcompose.domain.usecases.GetTokensUseCase
-import com.example.superfitcompose.domain.usecases.GetTrainingHistoryUseCase
-import com.example.superfitcompose.domain.usecases.RegisterUseCase
-import com.example.superfitcompose.domain.usecases.SaveExerciseProgressUseCase
-import com.example.superfitcompose.domain.usecases.SharedPreferencesInteractor
-import com.example.superfitcompose.domain.usecases.ValidationUseCase
-import com.example.superfitcompose.repositories.AuthRepositoryImpl
-import com.example.superfitcompose.repositories.ProfileRepositoryImpl
-import com.example.superfitcompose.repositories.TrainingRepositoryImpl
+import com.example.superfitcompose.domain.repositoryinterfaces.*
+import com.example.superfitcompose.domain.usecases.*
+import com.example.superfitcompose.repositories.*
 import com.example.superfitcompose.ui.auth.code.CodeInputViewModel
 import com.example.superfitcompose.ui.auth.login.LoginViewModel
 import com.example.superfitcompose.ui.auth.register.RegisterViewModel
@@ -49,7 +38,7 @@ val viewModels = module {
     viewModel { ExerciseViewModel(get(), get()) }
     viewModel { AllExercisesViewModel() }
     viewModel { MainScreenViewModel(get(), get(), get()) }
-    viewModel { MyBodyViewModel(get()) }
+    viewModel { MyBodyViewModel(get(), get(), get(), get(), get(), androidContext() as MyApplication) }
 }
 
 val usecases = module {
@@ -62,6 +51,10 @@ val usecases = module {
     factory { GetBodyParamsUseCase(get()) }
     factory { GetTrainingHistoryUseCase(get()) }
     factory { SaveExerciseProgressUseCase(get()) }
+    factory { UpdateBodyParamsUseCase(get()) }
+    factory { AddNewImageUseCase(get()) }
+    factory { GetUserPhotosUseCase(get()) }
+    factory { DownloadPhotoUseCase(get()) }
 }
 
 val repositories = module {
