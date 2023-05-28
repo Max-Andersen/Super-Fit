@@ -61,6 +61,7 @@ class ImageListViewModel(
                                         PhotoData(
                                             Instant.fromEpochMilliseconds(photoId.uploaded * 1000L)
                                                 .toString().subSequence(0, 10) as String,
+                                            photoId.id,
                                             bitmap.asImageBitmap()
                                         )
                                     )
@@ -108,7 +109,7 @@ class ImageListViewModel(
             }
 
             is ClickedOnImage -> {
-
+                _screenState.value = state.copy(navigateToPhotoData = intent.data)
             }
 
             is NavigationBack -> {

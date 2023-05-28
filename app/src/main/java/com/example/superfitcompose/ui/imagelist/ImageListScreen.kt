@@ -1,8 +1,8 @@
 package com.example.superfitcompose.ui.imagelist
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.shared.StringMap
 import org.koin.androidx.compose.koinViewModel
 
@@ -41,22 +44,35 @@ fun ImageListScreen(navController: NavController, viewModel: ImageListViewModel 
 
     val viewState by viewModel.getViewState().observeAsState(ImageListViewState())
 
+    if (viewState.navigateBack) {
+        viewModel.processIntent(ImageListIntent.NavigationProcessed)
+        navController.navigateUp()
+    }
+
+    if (viewState.navigateToPhotoData != null) {
+        val value = viewState.navigateToPhotoData
+        viewModel.processIntent(ImageListIntent.NavigationProcessed)
+        navController.navigate(Routes.IMAGE + "/${value!!.date}/${value.id}")
+    }
+
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.secondary) {
         Scaffold(
             modifier = Modifier
                 .padding(start = 20.dp, top = 40.dp, end = 20.dp),
             containerColor = MaterialTheme.colorScheme.secondary,
             topBar = {
-                Box {
-                    Image(
-                        painter = painterResource(id = R.drawable.left),
-                        contentDescription = null,
-                        modifier = Modifier
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.left),
+                    contentDescription = null,
+                    modifier = Modifier.clickable { viewModel.processIntent(ImageListIntent.NavigationBack) }
+                )
             }) { paddings ->
 
-            Column(modifier = Modifier.padding(paddings)) {
+            Column(
+                modifier = Modifier
+                    .padding(paddings)
+                    .verticalScroll(rememberScrollState())
+            ) {
                 viewState.imageList?.forEach { photoCell ->
                     Column(
                         modifier = Modifier
@@ -86,19 +102,22 @@ fun ImageListScreen(navController: NavController, viewModel: ImageListViewModel 
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(110.dp)
-                                        .padding(top = 16.dp),
-                                    contentScale = ContentScale.Crop
+                                        .padding(top = 8.dp)
+                                        .clickable {
+                                            viewModel.processIntent(
+                                                ImageListIntent.ClickedOnImage(
+                                                    it
+                                                )
+                                            )
+                                        },
+                                    contentScale = ContentScale.Crop,
                                 )
                             }
                         }
-
                     }
                 }
             }
-
         }
     }
-
-
 }
 

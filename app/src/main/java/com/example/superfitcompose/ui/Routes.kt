@@ -10,6 +10,7 @@ object Routes {
     const val ALL_EXERCISES = "all_exercises_screen"
     const val MY_BODY_DETAILS = "my_body_details_screen"
     const val IMAGE_LIST = "image_list_screen"
+    const val IMAGE = "image_screen"
     const val TRAIN_PROGRESS = "train_progress_screen"
     const val STATISTICS = "statistics_screen"
 }

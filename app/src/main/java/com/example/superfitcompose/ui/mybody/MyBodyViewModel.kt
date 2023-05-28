@@ -112,6 +112,7 @@ class MyBodyViewModel(
                                             firstPhoto = PhotoData(
                                                 Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
                                                     .toString().subSequence(0, 10) as String,
+                                                photo.id,
                                                 bitmap.asImageBitmap()
                                             )
                                         )
@@ -133,6 +134,7 @@ class MyBodyViewModel(
                                             latestPhoto = PhotoData(
                                                 Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
                                                     .toString().subSequence(0, 10) as String,
+                                                photo.id,
                                                 bitmap.asImageBitmap()
                                             )
                                         )
