@@ -1,4 +1,4 @@
-package com.example.superfitcompose.ui.mybody
+package com.example.superfitcompose.ui.shared.models
 
 import androidx.compose.ui.graphics.ImageBitmap
 

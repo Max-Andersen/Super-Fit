@@ -25,6 +25,7 @@ import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
 import com.example.superfitcompose.ui.auth.register.RegisterScreen
 import com.example.superfitcompose.ui.exercise.ExerciseScreen
+import com.example.superfitcompose.ui.imagelist.ImageListScreen
 import com.example.superfitcompose.ui.main.exercises.AllExercisesScreen
 import com.example.superfitcompose.ui.main.mainscreen.MainScreen
 import com.example.superfitcompose.ui.mybody.MyBodyScreen
@@ -65,6 +66,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(Routes.MY_BODY_DETAILS) { MyBodyScreen(navController = navController) }
+                    composable(Routes.IMAGE_LIST) { ImageListScreen(navController = navController) }
+                    composable(Routes.TRAIN_PROGRESS){ }
+                    composable(Routes.STATISTICS){ }
+
                 }
 
             }

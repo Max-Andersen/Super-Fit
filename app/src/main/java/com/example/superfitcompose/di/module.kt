@@ -12,6 +12,7 @@ import com.example.superfitcompose.ui.auth.code.CodeInputViewModel
 import com.example.superfitcompose.ui.auth.login.LoginViewModel
 import com.example.superfitcompose.ui.auth.register.RegisterViewModel
 import com.example.superfitcompose.ui.exercise.ExerciseViewModel
+import com.example.superfitcompose.ui.imagelist.ImageListViewModel
 import com.example.superfitcompose.ui.main.exercises.AllExercisesViewModel
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenViewModel
 import com.example.superfitcompose.ui.mybody.MyBodyViewModel
@@ -39,6 +40,7 @@ val viewModels = module {
     viewModel { AllExercisesViewModel() }
     viewModel { MainScreenViewModel(get(), get(), get()) }
     viewModel { MyBodyViewModel(get(), get(), get(), get(), get(), androidContext() as MyApplication) }
+    viewModel { ImageListViewModel(get(), get(),) }
 }
 
 val usecases = module {

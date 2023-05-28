@@ -55,6 +55,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.ui.Routes
+import com.example.superfitcompose.ui.shared.models.PhotoData
 import org.koin.androidx.compose.koinViewModel
 import java.io.ByteArrayOutputStream
 
@@ -64,7 +66,6 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
 
     LaunchedEffect(key1 = true) {
         viewModel.processIntent(MyBodyIntent.LoadData)
-        //viewModel.processIntent(MyBodyIntent.GetFirstAndLastImages)
     }
 
     val viewState by viewModel.getViewState().observeAsState(MyBodyViewState())
@@ -89,6 +90,21 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
 
     if (viewState.addImage) {
         AddImage(viewModel::processIntent, viewState.imageUri)
+    }
+
+    if (viewState.seeTrainProgress){
+        viewModel.processIntent(MyBodyIntent.NavigationProcessed)
+        navController.navigate(Routes.TRAIN_PROGRESS)
+    }
+
+    if (viewState.seeMyProgress){
+        viewModel.processIntent(MyBodyIntent.NavigationProcessed)
+        navController.navigate(Routes.IMAGE_LIST)
+    }
+
+    if (viewState.seeStatistics){
+        viewModel.processIntent(MyBodyIntent.NavigationProcessed)
+        navController.navigate(Routes.STATISTICS)
     }
 
     Surface(
@@ -240,7 +256,7 @@ fun MyProgress(sendIntent: (MyBodyIntent) -> Unit, firstPhoto: PhotoData?, lates
                     ),
             ) {
                 Text(
-                    text = firstPhoto?.date ?: "21.03.3122",
+                    text = firstPhoto?.date ?: "---",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White,
                     modifier = Modifier.padding(
@@ -260,7 +276,7 @@ fun MyProgress(sendIntent: (MyBodyIntent) -> Unit, firstPhoto: PhotoData?, lates
                         ),
                 ) {
                     Text(
-                        text = latestPhoto?.date ?: "21.03.3122",
+                        text = latestPhoto?.date ?: "---",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                         modifier = Modifier.padding(

@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.main.mainscreen
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +14,7 @@ import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.ClickedOn
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.ClickedOnMyBodyCard
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.ClickedOnSeeAllExercises
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.ClickedOnSignOut
-import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.GetBodyParams
-import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.GetLastTraining
+import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.LoadData
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenIntent.NavigationProcessed
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,10 +31,10 @@ class MainScreenViewModel(
 
 
     override fun processIntent(intent: MainScreenIntent) {
-        val state = _screenState.value ?: return
+        var state = _screenState.value ?: return
 
         when (intent) {
-            is GetBodyParams -> {
+            is LoadData -> {
                 viewModelScope.launch {
                     getBodyParamsUseCase().collect {
                         when (it) {
@@ -42,6 +42,7 @@ class MainScreenViewModel(
                                 withContext(Dispatchers.Main) {
                                     _screenState.value =
                                         state.copy(bodyParams = it.data.lastOrNull())
+                                    state = _screenState.value ?: return@withContext
                                 }
                             }
 
@@ -49,11 +50,7 @@ class MainScreenViewModel(
                             is ApiResponse.Loading -> {}
                         }
                     }
-                }
-            }
 
-            is GetLastTraining -> {
-                viewModelScope.launch {
                     getTrainingHistoryUseCase().collect {
                         when (it) {
                             is ApiResponse.Success -> {
@@ -70,11 +67,14 @@ class MainScreenViewModel(
                                                 )
                                             )
                                     } else { // 2
+                                        val first = it.data.lastOrNull()?.exercise
+                                        val second =
+                                            it.data.findLast { exercise -> exercise.exercise != first }?.exercise
                                         _screenState.value =
                                             state.copy(
                                                 lastTrainings = Pair(
-                                                    it.data.lastOrNull()?.exercise,
-                                                    it.data.getOrNull(it.data.lastIndex - 1)?.exercise
+                                                    first,
+                                                    second
                                                 )
                                             )
                                     }

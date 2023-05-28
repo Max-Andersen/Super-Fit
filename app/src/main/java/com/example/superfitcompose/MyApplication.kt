@@ -2,6 +2,8 @@ package com.example.superfitcompose
 
 import android.app.Application
 import android.content.Context
+import android.content.res.Resources
+import android.net.wifi.aware.AwareResources
 import com.example.superfitcompose.di.data
 import com.example.superfitcompose.di.repositories
 import com.example.superfitcompose.di.retrofit

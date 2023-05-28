@@ -1,7 +1,7 @@
 package com.example.superfitcompose.ui.mybody
 
 import android.net.Uri
-import androidx.compose.ui.graphics.ImageBitmap
+import com.example.superfitcompose.ui.shared.models.PhotoData
 
 data class MyBodyViewState (
     val weight: Int = 0,

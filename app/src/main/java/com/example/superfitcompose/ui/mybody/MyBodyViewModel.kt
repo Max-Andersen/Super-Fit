@@ -33,13 +33,12 @@ import com.example.superfitcompose.ui.mybody.MyBodyIntent.NavigationProcessed
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.NewImageSelected
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.SaveBodyParams
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.SaveNewImage
+import com.example.superfitcompose.ui.shared.models.PhotoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
@@ -65,7 +64,7 @@ class MyBodyViewModel(
             is LoadData -> {
                 viewModelScope.launch {
                     getBodyParamsUseCase().collect {
-                        if (it is ApiResponse.Success){
+                        if (it is ApiResponse.Success) {
                             withContext(Dispatchers.Main) {
                                 val lastData = it.data.lastOrNull()
 
@@ -111,7 +110,8 @@ class MyBodyViewModel(
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
                                             firstPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L).toString().subSequence(0, 10) as String,
+                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
+                                                    .toString().subSequence(0, 10) as String,
                                                 bitmap.asImageBitmap()
                                             )
                                         )
@@ -131,7 +131,8 @@ class MyBodyViewModel(
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
                                             latestPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L).toString().subSequence(0, 10) as String,
+                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
+                                                    .toString().subSequence(0, 10) as String,
                                                 bitmap.asImageBitmap()
                                             )
                                         )
@@ -141,7 +142,6 @@ class MyBodyViewModel(
                         }
 
                     }
-
                 }
             }
 
@@ -198,7 +198,9 @@ class MyBodyViewModel(
 
             }
 
-            is ClickedOnSeeAllProgress -> {}
+            is ClickedOnSeeAllProgress -> {
+                _screenState.value = state.copy(seeMyProgress = true)
+            }
 
             is ClickedOnAddImage -> {
                 _screenState.value = state.copy(addImage = true)
@@ -235,14 +237,24 @@ class MyBodyViewModel(
             }
 
             is ClosePhotoSelect -> {
-                _screenState.value = state.copy(addImage = false)
+                _screenState.value = state.copy(addImage = true)
             }
 
-            is ClickedOnTrainProgress -> {}
+            is ClickedOnTrainProgress -> {
+                _screenState.value = state.copy(seeTrainProgress = true)
+            }
 
-            is ClickedOnStatistics -> {}
+            is ClickedOnStatistics -> {
+                _screenState.value = state.copy(seeStatistics = true)
+            }
 
-            is NavigationProcessed -> {}
+            is NavigationProcessed -> {
+                _screenState.value = state.copy(
+                    seeStatistics = false,
+                    seeTrainProgress = false,
+                    seeMyProgress = false
+                )
+            }
         }
     }
 

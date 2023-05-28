@@ -1,5 +1,6 @@
 package com.example.superfitcompose.ui.main.mainscreen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,8 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = koinViewModel()) {
 
     LaunchedEffect(key1 = true) {
-        viewModel.processIntent(MainScreenIntent.GetBodyParams)
-        viewModel.processIntent(MainScreenIntent.GetLastTraining)
+        viewModel.processIntent(MainScreenIntent.LoadData)
     }
 
     val viewState by viewModel.getViewState().observeAsState(MainScreenViewState())
@@ -145,7 +145,6 @@ fun MainScreenFilling(
             style = MaterialTheme.typography.headlineSmall,
             color = Color.Black
         )
-
         MyBodyCard(
             bodyParameters?.weight,
             bodyParameters?.height

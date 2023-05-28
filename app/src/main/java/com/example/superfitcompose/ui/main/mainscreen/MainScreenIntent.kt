@@ -4,9 +4,8 @@ import com.example.superfitcompose.data.network.models.TrainingType
 
 sealed class MainScreenIntent {
 
-    object GetBodyParams: MainScreenIntent()
+    object LoadData: MainScreenIntent()
 
-    object GetLastTraining: MainScreenIntent()
 
     object ClickedOnMyBodyCard: MainScreenIntent()
 
