@@ -50,7 +50,7 @@ fun ZoomableImage(
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { /* NADA :) */ },
+                onClick = {  },
                 onDoubleClick = {
                     if (scale.value >= 2f) {
                         scale.value = 1f

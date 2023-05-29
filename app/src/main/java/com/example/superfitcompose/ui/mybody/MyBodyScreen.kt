@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -70,6 +72,14 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
 
     val viewState by viewModel.getViewState().observeAsState(MyBodyViewState())
 
+    BackHandler(true) {
+        navController.navigate(Routes.MAIN_SCREEN){
+            popUpTo(
+                navController.graph.id
+            )
+        }
+    }
+
     if (viewState.editHeight) {
         EnterBodyParam(
             type = BodyParamsTypes.Height,
@@ -92,17 +102,17 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
         AddImage(viewModel::processIntent, viewState.imageUri)
     }
 
-    if (viewState.seeTrainProgress){
+    if (viewState.seeTrainProgress) {
         viewModel.processIntent(MyBodyIntent.NavigationProcessed)
         navController.navigate(Routes.TRAIN_PROGRESS)
     }
 
-    if (viewState.seeMyProgress){
+    if (viewState.seeMyProgress) {
         viewModel.processIntent(MyBodyIntent.NavigationProcessed)
         navController.navigate(Routes.IMAGE_LIST)
     }
 
-    if (viewState.seeStatistics){
+    if (viewState.seeStatistics) {
         viewModel.processIntent(MyBodyIntent.NavigationProcessed)
         navController.navigate(Routes.STATISTICS)
     }
@@ -185,7 +195,11 @@ fun MyWeight(weight: Int, sendIntent: () -> Unit) {
 }
 
 @Composable
-fun MyProgress(sendIntent: (MyBodyIntent) -> Unit, firstPhoto: PhotoData?, latestPhoto: PhotoData?) {
+fun MyProgress(
+    sendIntent: (MyBodyIntent) -> Unit,
+    firstPhoto: PhotoData?,
+    latestPhoto: PhotoData?
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,28 +226,30 @@ fun MyProgress(sendIntent: (MyBodyIntent) -> Unit, firstPhoto: PhotoData?, lates
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 14.dp)
+                .clip(
+                    RoundedCornerShape(
+                        8.dp
+                    )
+                )
+                .background(Color.White)
         ) {
+
             Image(
-                bitmap = firstPhoto?.photo ?: ImageBitmap.imageResource(id = R.drawable.default_image),
+                bitmap = firstPhoto?.photo
+                    ?: ImageBitmap.imageResource(id = R.drawable.default_image),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth(0.5f).height(220.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 8.dp, bottomStart = 8.dp
-                        )
-                    ),
+                    .fillMaxWidth(0.5f)
+                    .height(220.dp),
                 contentScale = ContentScale.Crop
             )
+            Box(modifier = Modifier.width(4.dp))
             Image(
-                bitmap = latestPhoto?.photo ?: ImageBitmap.imageResource(id = R.drawable.default_image),
+                bitmap = latestPhoto?.photo
+                    ?: ImageBitmap.imageResource(id = R.drawable.default_image),
                 contentDescription = null,
-                modifier = Modifier.height(220.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topEnd = 8.dp, bottomEnd = 8.dp
-                        )
-                    )
+                modifier = Modifier
+                    .height(220.dp)
                     .fillMaxWidth(1f),
                 contentScale = ContentScale.Crop
             )

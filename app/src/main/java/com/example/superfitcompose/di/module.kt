@@ -17,6 +17,8 @@ import com.example.superfitcompose.ui.imagelist.ImageListViewModel
 import com.example.superfitcompose.ui.main.exercises.AllExercisesViewModel
 import com.example.superfitcompose.ui.main.mainscreen.MainScreenViewModel
 import com.example.superfitcompose.ui.mybody.MyBodyViewModel
+import com.example.superfitcompose.ui.statistics.StatisticsViewModel
+import com.example.superfitcompose.ui.trainprogress.TrainProgressViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -43,6 +45,8 @@ val viewModels = module {
     viewModel { MyBodyViewModel(get(), get(), get(), get(), get(), androidContext() as MyApplication) }
     viewModel { ImageListViewModel(get(), get(),) }
     viewModel { ImageViewModel(get()) }
+    viewModel { StatisticsViewModel(get()) }
+    viewModel { TrainProgressViewModel(get()) }
 }
 
 val usecases = module {

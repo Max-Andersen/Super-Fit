@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -54,13 +55,15 @@ fun ImageScreen(
                 .padding(),
             containerColor = MaterialTheme.colorScheme.secondary,
             topBar = {
-                Image(
-                    painter = painterResource(id = R.drawable.left),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable { viewModel.processIntent(ImageIntent.ClickedOnNavigateBack) }
-                        .padding(start = 20.dp, top = 40.dp)
-                )
+                Box(modifier = Modifier.padding(start = 20.dp, top = 40.dp)){
+                    Image(
+                        painter = painterResource(id = R.drawable.left),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable { viewModel.processIntent(ImageIntent.ClickedOnNavigateBack) }
+                    )
+                }
+
             },
             bottomBar = {
                 Box(

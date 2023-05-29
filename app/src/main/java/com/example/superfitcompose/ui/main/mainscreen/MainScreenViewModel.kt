@@ -41,7 +41,7 @@ class MainScreenViewModel(
                             is ApiResponse.Success -> {
                                 withContext(Dispatchers.Main) {
                                     _screenState.value =
-                                        state.copy(bodyParams = it.data.lastOrNull())
+                                        state.copy(bodyParams = it.data.maxByOrNull { item -> item.date })
                                     state = _screenState.value ?: return@withContext
                                 }
                             }

@@ -66,7 +66,7 @@ class MyBodyViewModel(
                     getBodyParamsUseCase().collect {
                         if (it is ApiResponse.Success) {
                             withContext(Dispatchers.Main) {
-                                val lastData = it.data.lastOrNull()
+                                val lastData = it.data.maxByOrNull { item -> item.date }
 
                                 val height = lastData?.height ?: 0
                                 val weight = lastData?.weight ?: 0
@@ -116,6 +116,7 @@ class MyBodyViewModel(
                                                 bitmap.asImageBitmap()
                                             )
                                         )
+                                        state = _screenState.value ?: return@withContext
                                     }
                                 }
                             }
@@ -223,6 +224,30 @@ class MyBodyViewModel(
                     addNewImageUseCase(bitmap).collect {
                         when (it) {
                             is ApiResponse.Success -> {
+                                withContext(Dispatchers.Main) {
+                                    if (state.firstPhoto == null) {
+                                        _screenState.value = state.copy(
+                                            firstPhoto = PhotoData(
+                                                Instant.fromEpochMilliseconds(it.data.uploaded * 1000L)
+                                                    .toString().subSequence(0, 10) as String,
+                                                it.data.id,
+                                                bitmap.asImageBitmap()
+                                            )
+                                        )
+                                    } else {
+                                        _screenState.value = state.copy(
+                                            latestPhoto = PhotoData(
+                                                Instant.fromEpochMilliseconds(it.data.uploaded * 1000L)
+                                                    .toString().subSequence(0, 10) as String,
+                                                it.data.id,
+                                                bitmap.asImageBitmap()
+                                            )
+                                        )
+                                    }
+
+                                    state = _screenState.value ?: return@withContext
+                                }
+
                                 Log.d("!!!!", "SUCCEED")
                             }
 
@@ -233,9 +258,11 @@ class MyBodyViewModel(
                             is ApiResponse.Loading -> {}
                         }
                     }
-                }
-                _screenState.value = state.copy(imageUri = null, addImage = false)
 
+                    withContext(Dispatchers.Main) {
+                        _screenState.value = state.copy(imageUri = null, addImage = false)
+                    }
+                }
             }
 
             is ClosePhotoSelect -> {

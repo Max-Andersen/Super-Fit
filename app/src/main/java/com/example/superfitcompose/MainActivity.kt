@@ -25,12 +25,14 @@ import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
 import com.example.superfitcompose.ui.auth.register.RegisterScreen
 import com.example.superfitcompose.ui.exercise.ExerciseScreen
-import com.example.superfitcompose.ui.imagelist.ImageListScreen
 import com.example.superfitcompose.ui.image.ImageScreen
+import com.example.superfitcompose.ui.imagelist.ImageListScreen
 import com.example.superfitcompose.ui.main.exercises.AllExercisesScreen
 import com.example.superfitcompose.ui.main.mainscreen.MainScreen
 import com.example.superfitcompose.ui.mybody.MyBodyScreen
+import com.example.superfitcompose.ui.statistics.StatisticsScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
+import com.example.superfitcompose.ui.trainprogress.TrainProgressScreen
 
 
 val bottomPadding = 25.dp
@@ -78,11 +80,9 @@ class MainActivity : ComponentActivity() {
                             photoId = navBackStack.arguments?.getString("id")
                         )
                     }
-                    composable(Routes.TRAIN_PROGRESS) { }
-                    composable(Routes.STATISTICS) { }
-
+                    composable(Routes.TRAIN_PROGRESS) { TrainProgressScreen(navController = navController) }
+                    composable(Routes.STATISTICS) { StatisticsScreen(navController = navController) }
                 }
-
             }
         }
     }
