@@ -66,6 +66,15 @@
     <string name="december">December</string>
 
 
+    <string name="last_train">Last train:&#160;</string>
+    <string name="progress">Progress:&#160;</string>
+    <string name="last_train_times">%1s times</string>
+    <string name="last_train_seconds">%1s seconds</string>
+    <string name="last_train_meters">%1s meters</string>
+    <string name="progress_percents">%1$s%%</string>
+
+
+
 
     <string name="push_ups">Push-Ups</string>
     <string name="push_ups_description">Push-ups exercise the pectoral muscles, triceps, and anterior deltoids.</string>

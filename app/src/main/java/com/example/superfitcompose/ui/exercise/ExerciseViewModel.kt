@@ -172,7 +172,7 @@ class ExerciseViewModel(
             }
 
             is ExerciseStepDone -> {
-                if (state.beginCounterValue != 0) {
+                if (state.beginCounterValue != 0 && !state.pause ) {
                     exerciseStep = intent.count
                     exerciseStepDone = true
                 }
