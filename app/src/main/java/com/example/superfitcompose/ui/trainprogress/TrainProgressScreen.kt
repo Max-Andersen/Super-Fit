@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -73,7 +72,7 @@ internal val runningLine = listOf(
 )
 
 internal const val pushUpsX = 175f
-internal val pushUpsY = listOf(107f, 128f, 143f) // 105   130   149        +2  -2  -6
+internal val pushUpsY = listOf(107f, 128f, 143f)
 
 internal const val plankX = 161f
 internal val plankY = listOf(205f, 228f, 243f)
@@ -88,14 +87,13 @@ internal const val runningX = 167.5f
 internal val runningY = listOf(542f, 565f, 580f)
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainProgressScreen(
     navController: NavController,
     viewModel: TrainProgressViewModel = koinViewModel()
 ) {
     LaunchedEffect(key1 = true) {
-
+        viewModel.processIntent(TrainProgressIntent.LoadData)
     }
 
     val viewState by viewModel.getViewState().observeAsState(TrainProgressViewState())
@@ -206,11 +204,31 @@ fun TrainProgressScreen(
 
             val density = LocalDensity.current
 
-            OnDrawText(TrainingType.PUSH_UP, density, imageSize, "35", "12",true)
-            OnDrawText(TrainingType.PLANK, density, imageSize, "40", "-8",false)
-            OnDrawText(TrainingType.CRUNCH, density, imageSize, "40", "24",true)
-            OnDrawText(TrainingType.SQUATS, density, imageSize, "30", "5",true)
-            OnDrawText(TrainingType.RUNNING, density, imageSize, "1500", "5",true)
+            viewState.pushUpsTrainProgress?.let {
+                OnDrawText(TrainingType.PUSH_UP, density, imageSize,
+                    it
+                )
+            }
+            viewState.plankTrainProgress?.let {
+                OnDrawText(TrainingType.PLANK, density, imageSize,
+                    it
+                )
+            }
+            viewState.crunchTrainProgress?.let {
+                OnDrawText(TrainingType.CRUNCH, density, imageSize,
+                    it
+                )
+            }
+            viewState.squatsTrainProgress?.let {
+                OnDrawText(TrainingType.SQUATS, density, imageSize,
+                    it
+                )
+            }
+            viewState.runningTrainProgress?.let {
+                OnDrawText(TrainingType.RUNNING, density, imageSize,
+                    it
+                )
+            }
 
         }
 
@@ -233,20 +251,6 @@ fun TrainProgressScreen(
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
-            //}
-
-//        Scaffold(
-//            modifier = Modifier
-//                .padding(),
-//            containerColor = MaterialTheme.colorScheme.secondary,
-//            topBar = {
-//
-//
-//
-//            }
-//        ) { it ->
-
-
         }
     }
 }
@@ -256,9 +260,7 @@ fun OnDrawText(
     type: TrainingType,
     density: Density,
     imageSize: IntSize,
-    lastTrain: String,
-    progress: String,
-    up: Boolean
+    trainProgress: TrainProgress,
 ) {
     var xPadding = 0f
     var yPaddings = listOf<Float>()
@@ -333,7 +335,7 @@ fun OnDrawText(
             color = Color.White
         )
         Text(
-            text = lastTrainText.format(lastTrain),
+            text = lastTrainText.format(trainProgress.lastTrain.toString()),
             style = MaterialTheme.typography.headlineSmall,
             fontSize = 12.sp
         )
@@ -356,14 +358,14 @@ fun OnDrawText(
             color = Color.White
         )
         Text(
-            text = stringResource(id = R.string.progress_percents).format(progress),
+            text = stringResource(id = R.string.progress_percents).format(trainProgress.progress.toString()),
             style = MaterialTheme.typography.headlineSmall,
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.size(4.dp))
         Image(
             painter = painterResource(
-                id = if (up) {
+                id = if (trainProgress.progress >= 0) {
                     R.drawable.up
                 } else {
                     R.drawable.down

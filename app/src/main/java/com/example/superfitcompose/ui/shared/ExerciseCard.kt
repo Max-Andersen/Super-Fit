@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.superfitcompose.R
 import com.example.superfitcompose.data.network.models.TrainingType
+import java.util.Locale
 
 @Composable
 fun ExerciseCard(type: TrainingType, cardClick: () -> Unit) {
@@ -73,7 +74,8 @@ fun ExerciseCard(type: TrainingType, cardClick: () -> Unit) {
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp)
             ) {
                 Text(
-                    text = type.name,
+                    text = type.name.replace('_', ' ').lowercase()
+                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
                     style = MaterialTheme.typography.headlineSmall,
                     fontSize = 14.sp
                 )

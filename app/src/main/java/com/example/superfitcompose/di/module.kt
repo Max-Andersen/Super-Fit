@@ -46,7 +46,7 @@ val viewModels = module {
     viewModel { ImageListViewModel(get(), get(),) }
     viewModel { ImageViewModel(get()) }
     viewModel { StatisticsViewModel(get()) }
-    viewModel { TrainProgressViewModel(get()) }
+    viewModel { TrainProgressViewModel(get(), get()) }
 }
 
 val usecases = module {
@@ -63,6 +63,7 @@ val usecases = module {
     factory { AddNewImageUseCase(get()) }
     factory { GetUserPhotosUseCase(get()) }
     factory { DownloadPhotoUseCase(get()) }
+    factory { GetTrainProgressForExercise() }
 }
 
 val repositories = module {
