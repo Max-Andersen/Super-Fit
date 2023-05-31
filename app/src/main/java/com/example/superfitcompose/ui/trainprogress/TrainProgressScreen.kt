@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -118,8 +119,9 @@ fun TrainProgressScreen(
                 },
             contentDescription = null,
             contentScale = ContentScale.FillBounds
-
         )
+
+        TrainProgressTitle(viewModel::processIntent)
 
         Box(modifier = Modifier
             .fillMaxSize()
@@ -231,26 +233,29 @@ fun TrainProgressScreen(
             }
 
         }
+    }
+}
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row(
+@Composable
+fun TrainProgressTitle(sendIntent: (TrainProgressIntent) -> Unit) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, top = 40.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.left),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, top = 40.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.left),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clickable { viewModel.processIntent(TrainProgressIntent.ClickedOnNavigateBack) }
-                )
-                Spacer(modifier = Modifier.size(10.dp))
-                Text(
-                    text = stringResource(id = R.string.train_progress),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-            }
+                    .clickable { sendIntent(TrainProgressIntent.ClickedOnNavigateBack) }
+            )
+            Spacer(modifier = Modifier.size(10.dp))
+            Text(
+                text = stringResource(id = R.string.train_progress),
+                style = MaterialTheme.typography.headlineSmall
+            )
         }
     }
 }

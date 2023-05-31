@@ -1,14 +1,17 @@
 package com.example.superfitcompose.ui.exercise
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.superfitcompose.IntentHandler
+import com.example.superfitcompose.R
 import com.example.superfitcompose.data.network.ApiResponse
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.domain.usecases.GetTrainingHistoryUseCase
 import com.example.superfitcompose.domain.usecases.SaveExerciseProgressUseCase
+import com.example.superfitcompose.ui.exercise.ExerciseIntent.ErrorProceed
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.ExerciseStepDone
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.FinishExercise
 import com.example.superfitcompose.ui.exercise.ExerciseIntent.LoadExerciseData
@@ -59,14 +62,10 @@ class ExerciseViewModel(
 
         var state = _screenState.value ?: return
 
-        if (state.counter == 0) _screenState.value =
-            state.copy(counter = beginValue)
-
-
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _screenState.value = _screenState.value?.copy(pause = false, finished = false)
+                _screenState.value = state.copy(pause = false, finished = false, launchedMessage = false)
             }
 
 
@@ -105,12 +104,20 @@ class ExerciseViewModel(
     }
 
     private fun stop() {
-        val state = _screenState.value ?: return
-        job?.cancel()
-        _screenState.value = state.copy(pause = true, finished = true)
-        viewModelScope.launch {
-            saveExerciseProgress(if (trainingType == TrainingType.CRUNCH) beginValue else beginValue - state.counter)
+        var state = _screenState.value ?: return
+
+        if (!state.saved){
+            viewModelScope.launch {
+                saveExerciseProgress(if (trainingType == TrainingType.CRUNCH) beginValue else beginValue - state.counter)
+            }
+        } else{
+            _screenState.value = state.copy(error = R.string.try_to_save_twice_error)
+            state = _screenState.value ?: return
         }
+
+        job?.cancel()
+        _screenState.value = state.copy(pause = true, finished = true, saved = true)
+        Log.d("!!!!", _screenState.value?.error.toString())
     }
 
 
@@ -188,6 +195,10 @@ class ExerciseViewModel(
 
             is FinishExercise -> {
                 stop()
+            }
+
+            is ErrorProceed -> {
+                _screenState.value = state.copy(error = null)
             }
         }
     }

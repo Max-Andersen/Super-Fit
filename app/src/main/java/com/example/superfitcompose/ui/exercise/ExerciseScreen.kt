@@ -12,21 +12,33 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,10 +53,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.superfitcompose.R
-import com.example.superfitcompose.bottomPadding
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.vmadalin.easypermissions.EasyPermissions
@@ -60,10 +72,79 @@ internal var valueZ = 0f
 internal var movementDown = false
 internal var movementUp = false
 
+@Composable
+fun ShowLaunchedWarning(
+    exerciseType: TrainingType,
+    beginValue: Int,
+    sendIntent: (ExerciseIntent) -> Unit,
+    navigateUp: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = {},
+    ) {
+        Surface(
+            modifier = Modifier,
+            shape = RoundedCornerShape(10.dp),
+            color = MaterialTheme.colorScheme.error
+        ) {
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(start = 24.dp, end = 24.dp, bottom = 15.dp, top = 15.dp)
+                ) {
+
+                    val text = when (exerciseType) {
+                        TrainingType.PLANK -> R.string.start_exercise_warning_seconds
+                        TrainingType.RUNNING -> R.string.start_exercise_warning_meters
+                        else -> R.string.start_exercise_warning_times
+                    }
+
+                    Text(
+                        text = stringResource(id = R.string.will_we_start_train),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+
+                    Text(
+                        text = stringResource(id = text).format(beginValue),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 20.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.later),
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onError,
+                            modifier = Modifier.clickable { navigateUp() }
+                        )
+                        Spacer(modifier = Modifier.size(20.dp))
+                        Text(
+                            text = stringResource(id = R.string.go),
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onError,
+                            modifier = Modifier.clickable { sendIntent(ExerciseIntent.StartExercise) }
+                        )
+                    }
+
+                }
+            }
+        }
+
+    }
+}
+
 internal var sensitivity = 1.5f
 
 internal var sensorDelay = 500
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseScreen(
     navController: NavController,
@@ -71,6 +152,83 @@ fun ExerciseScreen(
     viewModel: ExerciseViewModel = koinViewModel()
 ) {
 
+    PrepareSensors(exerciseType, viewModel::processIntent)
+
+    val screenState by viewModel.getScreenState().observeAsState(ExerciseViewState())
+
+    if (screenState.launchedMessage) {
+        ShowLaunchedWarning(
+            exerciseType,
+            screenState.beginCounterValue,
+            viewModel::processIntent
+        ) { navController.navigateUp() }
+    }
+
+
+    SuperFitComposeTheme {
+        val snackbarHostState = remember {
+            SnackbarHostState()
+        }
+
+        Scaffold(snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }, containerColor = MaterialTheme.colorScheme.secondary) { paddings ->
+
+            val text = screenState.error?.let { stringResource(id = it) } ?: ""
+
+            LaunchedEffect(key1 = screenState.error) {
+                if (screenState.error != null) {
+                    snackbarHostState.showSnackbar(
+                        text,
+                        "Close",
+                        duration = SnackbarDuration.Long
+                    )
+                    viewModel.processIntent(ExerciseIntent.ErrorProceed)
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(paddings)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.secondary),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(modifier = Modifier) {
+                    Text(
+                        text = with(Locale.ROOT) {
+                            exerciseType.name.lowercase(this)
+                                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(this) else it.toString() }
+                        },
+                        style = MaterialTheme.typography.headlineMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 56.dp)
+                    )
+                    ExerciseCounter(
+                        screenState.counter,
+                        if (screenState.beginCounterValue == 0) 1 else screenState.beginCounterValue,
+                        screenState.finished,
+                        exerciseType
+                    )
+
+                    Controllers(screenState.pause,
+                        screenState.finished,
+                        onPause = { viewModel.processIntent(ExerciseIntent.PauseExercise) },
+                        onStart = { viewModel.processIntent(ExerciseIntent.StartExercise) },
+                        onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) })
+                }
+            }
+
+        }
+
+
+    }
+}
+
+@Composable
+fun PrepareSensors(exerciseType: TrainingType, sendIntent: (ExerciseIntent) -> Unit) {
     val isActivityRecognitionPermissionFree = false
     val isActivityRecognitionPermissionGranted = EasyPermissions.hasPermissions(
         LocalContext.current, ACTIVITY_RECOGNITION
@@ -89,7 +247,6 @@ fun ExerciseScreen(
     val sensorManager =
         LocalContext.current.getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-    val content = LocalContext.current
 
     var previousTotalSteps = 0f
 
@@ -99,8 +256,8 @@ fun ExerciseScreen(
 
             if (curTime - lastUpdate > sensorDelay) {
                 lastUpdate = curTime
-                processSensorMovement(event, exerciseType, content) {
-                    viewModel.processIntent(
+                processSensorMovement(event, exerciseType) {
+                    sendIntent(
                         ExerciseIntent.ExerciseStepDone()
                     )
                 }
@@ -119,7 +276,7 @@ fun ExerciseScreen(
             val currentSteps = totalSteps.toInt() - previousTotalSteps
             previousTotalSteps = totalSteps
 
-            viewModel.processIntent(
+            sendIntent(
                 ExerciseIntent.ExerciseStepDone(currentSteps.toInt())
             )
         }
@@ -129,7 +286,7 @@ fun ExerciseScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        viewModel.processIntent(ExerciseIntent.LoadExerciseData(exerciseType))
+        sendIntent(ExerciseIntent.LoadExerciseData(exerciseType))
 
         when (exerciseType) {
             TrainingType.PLANK -> {
@@ -163,48 +320,10 @@ fun ExerciseScreen(
             sensorManager.unregisterListener(stepCountListener)
         }
     }
-
-
-    SuperFitComposeTheme {
-        val screenState by viewModel.getScreenState().observeAsState(ExerciseViewState())
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.secondary),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(modifier = Modifier.padding(bottom = bottomPadding * 2)) {
-                Text(
-                    text = with(Locale.ROOT) {
-                        exerciseType.name.lowercase(this)
-                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(this) else it.toString() }
-                    },
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 56.dp)
-                )
-                ExerciseCounter(
-                    screenState.counter,
-                    if (screenState.beginCounterValue == 0) 1 else screenState.beginCounterValue,
-                    screenState.finished,
-                    exerciseType
-                )
-
-                Controllers(screenState.pause,
-                    screenState.finished,
-                    onPause = { viewModel.processIntent(ExerciseIntent.PauseExercise) },
-                    onStart = { viewModel.processIntent(ExerciseIntent.StartExercise) },
-                    onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) })
-            }
-        }
-    }
 }
 
 fun processSensorMovement(
-    event: SensorEvent, exerciseType: TrainingType, context: Context, processIntent: () -> Unit,
+    event: SensorEvent, exerciseType: TrainingType, processIntent: () -> Unit,
 ) {
     valueY = event.values[1]
     valueZ = event.values[2]
@@ -289,7 +408,7 @@ fun ExerciseProgress(
         if (finished) {
             if (counter <= 0 || exerciseType == TrainingType.CRUNCH) {
                 Image(
-                    painter = painterResource(id = R.drawable.complete_tick),
+                    painter = painterResource(id = R.drawable.completed_tick),
                     contentDescription = null,
                 )
             } else {

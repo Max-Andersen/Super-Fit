@@ -48,8 +48,6 @@ class TrainProgressViewModel(
                                 squatsTrainProgress = getTrainProgressForExercise(squats),
                                 runningTrainProgress = getTrainProgressForExercise(running),
                             )
-
-
                         }
                     }
                 }
@@ -64,5 +62,4 @@ class TrainProgressViewModel(
             }
         }
     }
-
 }

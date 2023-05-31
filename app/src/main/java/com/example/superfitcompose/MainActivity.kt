@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.superfitcompose.data.network.models.TrainingType
+import com.example.superfitcompose.domain.usecases.SharedPreferencesInteractor
 import com.example.superfitcompose.ui.Routes
 import com.example.superfitcompose.ui.auth.code.EnterCodeScreen
 import com.example.superfitcompose.ui.auth.login.LoginScreen
@@ -33,6 +34,7 @@ import com.example.superfitcompose.ui.mybody.MyBodyScreen
 import com.example.superfitcompose.ui.statistics.StatisticsScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.example.superfitcompose.ui.trainprogress.TrainProgressScreen
+import org.koin.androidx.compose.get
 
 
 val bottomPadding = 25.dp
@@ -90,22 +92,14 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun LaunchScreen(navController: NavController) {
-
+fun LaunchScreen(navController: NavController,  sharedPreferencesInteractor: SharedPreferencesInteractor = get()) {
     LaunchedEffect(true) {
-        navController.navigate(Routes.MAIN_SCREEN)
+        if (sharedPreferencesInteractor.getAccessToken() != ""){
+            navController.navigate(Routes.MAIN_SCREEN)
+        } else{
+            navController.navigate(Routes.LOGIN)
+        }
     }
-
-    Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
-        //val sharedPrefs: SharedPreferencesInteractor by inject()
-        //Log.d("!!!!", sharedPrefs.getAccessToken())
-        //if (sharedPrefs.getAccessToken() != "") { // Todo(normal logic)
-        //navController.navigate(Routes.LOGIN)
-//    } else {
-//        navController.navigate(Routes.LOGIN)
-//    }
-    }
-
 }
 
 @Composable

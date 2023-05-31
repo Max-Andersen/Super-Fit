@@ -13,4 +13,6 @@ sealed class ExerciseIntent {
 
     data class ExerciseStepDone(val count: Int = 1) : ExerciseIntent()
 
+    object ErrorProceed: ExerciseIntent()
+
 }

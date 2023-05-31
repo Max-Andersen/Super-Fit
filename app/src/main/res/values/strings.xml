@@ -74,6 +74,14 @@
     <string name="progress_percents">%1$s%%</string>
 
 
+    <string name="will_we_start_train">Start the training?</string>
+    <string name="start_exercise_warning_seconds">You need to do the exercise for %1s seconds. Are you ready?</string>
+    <string name="start_exercise_warning_times">You need to repeat the exercise %1s times. Are you ready?</string>
+    <string name="start_exercise_warning_meters">You need to run %1s meters. Are you ready?</string>
+
+    <string name="later">LATER</string>
+    <string name="go">GO!</string>
+    <string name="try_to_save_twice_error">You have already saved the result!</string>
 
 
     <string name="push_ups">Push-Ups</string>

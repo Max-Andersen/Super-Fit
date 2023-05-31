@@ -36,18 +36,18 @@ fun Controllers(
         verticalArrangement = Arrangement.Bottom
     ) {
         if (isPaused) {
-            Button(onClick = onStart, enabled = !isFinished, text = R.string.start_exercise)
+            ControlButton(onClick = onStart, enabled = !isFinished, text = R.string.start_exercise)
             Spacer(modifier = Modifier.size(16.dp))
-            Button(onClick = onStop, text = R.string.finish_exercise)
+            ControlButton(onClick = onStop, text = R.string.finish_exercise)
         } else {
-            Button(onClick = onPause, text = R.string.pause_exercise)
+            ControlButton(onClick = onPause, text = R.string.pause_exercise)
         }
     }
 }
 
 
 @Composable
-internal fun Button(
+internal fun ControlButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
     text: Int
