@@ -45,7 +45,7 @@ val viewModels = module {
     viewModel { MyBodyViewModel(get(), get(), get(), get(), get(), androidContext() as MyApplication) }
     viewModel { ImageListViewModel(get(), get(),) }
     viewModel { ImageViewModel(get()) }
-    viewModel { StatisticsViewModel(get()) }
+    viewModel { StatisticsViewModel(get(), get()) }
     viewModel { TrainProgressViewModel(get(), get()) }
 }
 

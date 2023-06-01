@@ -23,6 +23,8 @@
 
     <string name="exercise_not_finished">%1s times are missing.\nYou can do it better!</string>
 
+    <string name="training">Training</string>
+
 
     <string name="my_body">My body</string>
     <string name="undefined">Undefined</string>
@@ -35,7 +37,9 @@
     <string name="edit">Edit</string>
 
     <string name="weight">%1s kg</string>
+    <string name="weight_text">Weight</string>
     <string name="height">%1s cm</string>
+    <string name="height_text">Height</string>
 
 
     <string name="my_progress">My Progress</string>

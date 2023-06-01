@@ -79,7 +79,15 @@ val MyTypography = Typography(
         lineHeight = 78.sp,
         letterSpacing = letterSpacing,
         color = Color.White
+    ),
+
+    labelSmall = TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 10.sp,
+        letterSpacing = letterSpacing,
+        color = Color.White
     )
+
 
 
     /* Other default text styles to override
