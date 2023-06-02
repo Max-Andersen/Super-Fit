@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,6 +35,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -92,29 +95,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            GetRegisterTextField(viewState.username, R.string.username) { newUserName ->
-                viewModel.processIntent(
-                    RegisterScreenIntent.UserNameInput(newUserName)
-                )
-            }
-            GetRegisterTextField(viewState.email, R.string.email) { newEmail ->
-                viewModel.processIntent(
-                    RegisterScreenIntent.EmailInput(newEmail)
-                )
-            }
-            GetRegisterTextField(viewState.code, R.string.code) { newCode ->
-                viewModel.processIntent(
-                    RegisterScreenIntent.CodeInput(newCode)
-                )
-            }
-            GetRegisterTextField(
-                viewState.codeConfirmation,
-                R.string.repeat_code
-            ) { newCodeConfirmation ->
-                viewModel.processIntent(
-                    RegisterScreenIntent.CodeConfirmationInput(newCodeConfirmation)
-                )
-            }
+            PlaceRegisterTextFields(viewState.username, viewState.email, viewState.code, viewState.codeConfirmation, viewModel::processIntent)
 
             Row(
                 modifier = Modifier
@@ -148,16 +129,74 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
                 style = MaterialTheme.typography.headlineSmall
             )
         }
-
     }
+}
 
-
+@Composable
+fun PlaceRegisterTextFields(
+    username: String,
+    email: String,
+    code: String,
+    codeConfirmation: String,
+    sendIntent: (RegisterScreenIntent) -> Unit
+) {
+    RegisterTextField(
+        username,
+        R.string.username,
+        KeyboardOptions(imeAction = ImeAction.Done)
+    ) { newUserName ->
+        sendIntent(
+            RegisterScreenIntent.UserNameInput(newUserName)
+        )
+    }
+    RegisterTextField(
+        email,
+        R.string.email,
+        KeyboardOptions(imeAction = ImeAction.Done)
+    ) { newEmail ->
+        sendIntent(
+            RegisterScreenIntent.EmailInput(newEmail)
+        )
+    }
+    RegisterTextField(
+        code,
+        R.string.code,
+        KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+    ) { newCode ->
+        if (!newCode.contains('0')){
+            sendIntent(
+                RegisterScreenIntent.CodeInput(newCode)
+            )
+        }
+    }
+    RegisterTextField(
+        codeConfirmation,
+        R.string.repeat_code,
+        KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+    ) { newCodeConfirmation ->
+        if (!newCodeConfirmation.contains('0')){
+            sendIntent(
+                RegisterScreenIntent.CodeConfirmationInput(newCodeConfirmation)
+            )
+        }
+    }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GetRegisterTextField(text: String, hint: Int, sendText: (String) -> Unit) {
+fun RegisterTextField(
+    text: String,
+    hint: Int,
+    keyboardOptions: KeyboardOptions,
+    sendText: (String) -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     BasicTextField(
@@ -166,9 +205,9 @@ fun GetRegisterTextField(text: String, hint: Int, sendText: (String) -> Unit) {
         onValueChange = { newText -> sendText(newText) },
         singleLine = true,
         textStyle = MaterialTheme.typography.bodyMedium,
+        keyboardOptions = keyboardOptions,
         modifier = Modifier
             .fillMaxWidth()
-            //.wrapContentHeight(align = Alignment.Top)
             .indicatorLine(
                 enabled = true,
                 isError = false,

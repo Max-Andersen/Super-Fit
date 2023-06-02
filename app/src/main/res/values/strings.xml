@@ -23,6 +23,8 @@
 
     <string name="exercise_not_finished">%1s times are missing.\nYou can do it better!</string>
 
+    <string name="fail_load_data">Fail to load data</string>
+
     <string name="training">Training</string>
 
 

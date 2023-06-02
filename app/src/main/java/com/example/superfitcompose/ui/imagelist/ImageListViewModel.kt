@@ -88,12 +88,12 @@ class ImageListViewModel(
                                     lastYear = photoYear
                                     lastMonth = photoMonth
                                 } else{
-                                    data[photoYear + photoMonth] = mutableListOf(photoData)
+                                    data["$photoYear $photoMonth"] = mutableListOf(photoData)
                                     lastYear = photoYear
                                     lastMonth = photoMonth
                                 }
                             } else{
-                                data[photoYear + photoMonth] = mutableListOf(photoData)
+                                data["$photoYear $photoMonth"] = mutableListOf(photoData)
                                 lastYear = photoYear
                                 lastMonth = photoMonth
                             }
@@ -121,5 +121,4 @@ class ImageListViewModel(
             }
         }
     }
-
 }

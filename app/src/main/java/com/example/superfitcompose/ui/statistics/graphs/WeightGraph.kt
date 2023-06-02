@@ -122,10 +122,6 @@ fun WeightGraph(
             val stroke = Path().apply {
                 reset()
                 moveTo(coordinates.first().x, coordinates.first().y)
-                Log.d("!!!!", coordinates.size.toString())
-                coordinates.forEach {
-                    Log.d("!!!!", "${it.x}  ${it.y}")
-                }
                 for (i in 0 until coordinates.size - 1) {
                     cubicTo(
                         controlPoints1[i].x, controlPoints1[i].y,

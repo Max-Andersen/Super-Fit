@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.exercise
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,7 +19,6 @@ import com.example.superfitcompose.ui.exercise.ExerciseIntent.StartExercise
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -39,7 +37,7 @@ class ExerciseViewModel(
     private val _screenState = MutableLiveData(ExerciseViewState())
 
     private var beginValue by Delegates.notNull<Int>()
-    private lateinit var trainingType: TrainingType
+    private lateinit var currentTrainingType: TrainingType
 
     @Volatile
     private var exerciseStepDone: Boolean = false
@@ -59,30 +57,22 @@ class ExerciseViewModel(
 
     private fun start() {
         if (job?.isActive == true) return
-
         var state = _screenState.value ?: return
 
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
-                _screenState.value = state.copy(pause = false, finished = false, launchedMessage = false)
+                _screenState.value =
+                    state.copy(pause = false, finished = false, launchedMessage = false)
             }
-
 
             while (isActive) {
                 state = _screenState.value ?: return@launch
                 if (state.counter <= 0) {
-                    saveExerciseProgress(beginValue - state.counter)
-
-                    withContext(Dispatchers.Main) {
-                        _screenState.value = state.copy(pause = true, finished = true)
-                    }
-                    job?.cancel()
-                    return@launch
+                    stop()
                 }
 
-
-                if (trainingType == TrainingType.PLANK) {
+                if (currentTrainingType == TrainingType.PLANK) {
                     plankTimer()
                 }
 
@@ -103,34 +93,43 @@ class ExerciseViewModel(
         _screenState.value = _screenState.value?.copy(pause = true)
     }
 
-    private fun stop() {
+    private suspend fun stop() {
         var state = _screenState.value ?: return
 
-        if (!state.saved){
+        if (!state.saved) {
             viewModelScope.launch {
-                saveExerciseProgress(if (trainingType == TrainingType.CRUNCH) beginValue else beginValue - state.counter)
+                saveExerciseProgress(if (currentTrainingType == TrainingType.CRUNCH) beginValue else beginValue - state.counter)
             }
-        } else{
-            _screenState.value = state.copy(error = R.string.try_to_save_twice_error)
-            state = _screenState.value ?: return
+        } else {
+            withContext(Dispatchers.Main) {
+                _screenState.value = state.copy(error = R.string.try_to_save_twice_error)
+                state = _screenState.value ?: return@withContext
+            }
         }
 
+        withContext(Dispatchers.Main) {
+            _screenState.value = state.copy(pause = true, finished = true)
+        }
         job?.cancel()
-        _screenState.value = state.copy(pause = true, finished = true, saved = true)
-        Log.d("!!!!", _screenState.value?.error.toString())
     }
 
 
     private suspend fun saveExerciseProgress(count: Int) {
         saveExerciseProgressUseCase(
-            trainingType,
+            currentTrainingType,
             count,
             Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
-        ).collect()
+        ).collect {
+            if (it is ApiResponse.Success) {
+                withContext(Dispatchers.Main) {
+                    _screenState.value = _screenState.value?.copy(saved = true)
+                }
+            }
+        }
     }
 
     private suspend fun loadExerciseDataSucceed(trainingType: TrainingType): Boolean {
-        this@ExerciseViewModel.trainingType = trainingType
+        currentTrainingType = trainingType
 
         return getTrainingHistoryUseCase().last().let { trainings ->
             when (trainings) {
@@ -143,21 +142,34 @@ class ExerciseViewModel(
                 }
 
                 is ApiResponse.Success -> {
-                    val startExerciseValue = when (trainingType) {
-                        TrainingType.PLANK -> 20
-                        TrainingType.RUNNING -> 1000
-                        TrainingType.CRUNCH -> 10
-                        TrainingType.PUSH_UP -> 10
-                        TrainingType.SQUATS -> 10
-                    }
-
                     beginValue = trainings.data.filter { it.exercise == trainingType }
-                        .maxByOrNull { it.repeatCount }?.repeatCount?.plus(5) ?: startExerciseValue
+                        .maxByOrNull { it.repeatCount }?.repeatCount?.plus(
+                            getPlusDeltaForExercise(
+                                trainingType
+                            )
+                        )
+                        ?: getStartValueForExercise(trainingType)
                     return@let true
                 }
             }
         }
+    }
 
+    private fun getPlusDeltaForExercise(trainingType: TrainingType): Int {
+        return when (trainingType) {
+            TrainingType.RUNNING -> 100
+            else -> 5
+        }
+    }
+
+    private fun getStartValueForExercise(trainingType: TrainingType): Int {
+        return when (trainingType) {
+            TrainingType.PLANK -> 20
+            TrainingType.RUNNING -> 1000
+            TrainingType.CRUNCH -> 10
+            TrainingType.PUSH_UP -> 10
+            TrainingType.SQUATS -> 10
+        }
     }
 
     override fun processIntent(intent: ExerciseIntent) {
@@ -172,14 +184,17 @@ class ExerciseViewModel(
                                 state.copy(counter = beginValue, beginCounterValue = beginValue)
                         }
                     } else {
-                        // Error
+                        withContext(Dispatchers.Main) {
+                            _screenState.value =
+                                state.copy(error = R.string.fail_load_data)
+                        }
                     }
                 }
 
             }
 
             is ExerciseStepDone -> {
-                if (state.beginCounterValue != 0 && !state.pause ) {
+                if (state.beginCounterValue != 0 && !state.pause) {
                     exerciseStep = intent.count
                     exerciseStepDone = true
                 }
@@ -194,7 +209,9 @@ class ExerciseViewModel(
             }
 
             is FinishExercise -> {
-                stop()
+                viewModelScope.launch {
+                    stop()
+                }
             }
 
             is ErrorProceed -> {

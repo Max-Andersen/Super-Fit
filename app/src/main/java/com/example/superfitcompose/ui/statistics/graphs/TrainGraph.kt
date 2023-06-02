@@ -2,6 +2,7 @@ package com.example.superfitcompose.ui.statistics
 
 import android.graphics.Paint
 import android.graphics.PointF
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,24 +15,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Created by Saurabh
- */
 @Composable
 fun TrainGraph(
     modifier: Modifier,
-    xValues: List<Int>,
+    xValues: List<String>,
     yValues: List<Int>,
     points: List<Float>,
     paddingSpace: Dp,
     verticalStep: Int,
     gridColor: Color,
     lineColor: Color,
-    pointColor: Color
 ) {
-    val controlPoints1 = mutableListOf<PointF>()
-    val controlPoints2 = mutableListOf<PointF>()
-    val coordinates = mutableListOf<PointF>()
     val density = LocalDensity.current
     val textPaint = remember(density) {
         Paint().apply {
@@ -46,17 +40,33 @@ fun TrainGraph(
     ) {
         val xAxisSpace = (size.width - paddingSpace.toPx()) / xValues.size
         val yAxisSpace = size.height / yValues.size
-        /** placing x axis points */
 
         drawLine(
             color = gridColor,
-            start = Offset(xAxisSpace, size.height - 100),
-            end = Offset(size.width, size.height - 100)
+            start = Offset(100f, size.height - 100),
+            end = Offset(size.width, size.height - 100),
+            strokeWidth = 4f
+        )
+
+        drawLine(
+            color = gridColor,
+            start = Offset(size.width, 0f),
+            end = Offset(size.width, size.height - 95),
+            strokeWidth = 4f
+        )
+
+        drawLine(
+            color = gridColor,
+            start = Offset(100f, 0f),
+            end = Offset(100f, size.height - 95),
+            strokeWidth = 4f
         )
 
         for (i in xValues.indices) {
             drawContext.canvas.nativeCanvas.drawText(
-                "${xValues[i]}",
+                xValues[i].split("-").let {
+                    "${it[2]}.${it[1]}.${it[0]}"
+                },
                 xAxisSpace * (i + 1),
                 size.height - 30,
                 textPaint
@@ -69,14 +79,7 @@ fun TrainGraph(
             )
         }
 
-        drawLine(
-            color = gridColor,
-            start = Offset(100f, 0f),
-            end = Offset(100f, size.height - 100),
-            strokeWidth = 4f
-        )
 
-        /** placing y axis points */
         for (i in yValues.indices) {
             drawContext.canvas.nativeCanvas.drawText(
                 "${yValues[i]}",
@@ -92,17 +95,14 @@ fun TrainGraph(
             )
         }
 
-        /** placing our x axis points */
         for (i in points.indices) {
-            val x1 = xAxisSpace * xValues[i]
+            val x1 = xAxisSpace * (i + 1)
             val y1 = size.height - (yAxisSpace * (points[i] / verticalStep.toFloat()))
-            coordinates.add(PointF(x1, y1))
-            /** drawing circles to indicate all the points */
-
+            val height = size.height - 100 - y1
             drawRect(
                 lineColor,
                 topLeft = Offset(x1 - xAxisSpace * 0.3f, y1),
-                size = Size(xAxisSpace * 0.6f, size.height - 100 - y1)
+                size = Size(xAxisSpace * 0.6f, if (height >= 0f) height else 0f)
             )
         }
     }

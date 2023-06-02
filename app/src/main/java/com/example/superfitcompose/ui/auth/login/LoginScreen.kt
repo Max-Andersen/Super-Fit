@@ -127,7 +127,7 @@ fun EnterUsernameScreen(text: String, sendIntent: (LoginScreenIntent) -> Unit) {
             interactionSource = interactionSource,
             placeholder = {
                 Text(
-                    text = stringResource(id = R.string.username),
+                    text = stringResource(id = R.string.email),
                     modifier = Modifier.padding(0.dp),
                     style = MaterialTheme.typography.bodyMedium
                 )

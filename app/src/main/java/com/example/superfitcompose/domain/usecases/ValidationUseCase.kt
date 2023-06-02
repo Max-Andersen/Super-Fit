@@ -21,7 +21,7 @@ class ValidationUseCase {
         }
 
         if (code != null && codeConfirmation != null) {
-            if (!"\\d{4}".toRegex().matches(code) || !"\\d{4}".toRegex()
+            if (!"[1-9]{4}".toRegex().matches(code) || !"[1-9]{4}".toRegex()
                     .matches(codeConfirmation)
             ) {
                 answer += "Possible length of code is 4 digits\n"

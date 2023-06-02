@@ -1,6 +1,5 @@
 package com.example.superfitcompose.ui.main.mainscreen
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -58,18 +57,21 @@ class MainScreenViewModel(
                                     if (it.data.isEmpty()) {
                                         return@withContext
                                     }
-                                    if (it.data.size == 1) {
+
+                                    val list = it.data.sortedBy { exercise -> exercise.date }
+
+                                    if (list.size == 1) {
                                         _screenState.value =
                                             state.copy(
                                                 lastTrainings = Pair(
-                                                    it.data.last().exercise,
+                                                    list.last().exercise,
                                                     null
                                                 )
                                             )
                                     } else { // 2
-                                        val first = it.data.lastOrNull()?.exercise
+                                        val first = list.lastOrNull()?.exercise
                                         val second =
-                                            it.data.findLast { exercise -> exercise.exercise != first }?.exercise
+                                            list.findLast { exercise -> exercise.exercise != first }?.exercise
                                         _screenState.value =
                                             state.copy(
                                                 lastTrainings = Pair(
@@ -115,6 +117,4 @@ class MainScreenViewModel(
             }
         }
     }
-
-
 }

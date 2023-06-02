@@ -71,15 +71,13 @@ class MyBodyViewModel(
                                 val height = lastData?.height ?: 0
                                 val weight = lastData?.weight ?: 0
 
-                                _screenState.value =
-                                    state.copy(
-                                        weight = weight,
-                                        height = height,
-                                        editWeight = height == 0,
-                                        editHeight = weight == 0
-                                    )
+                                _screenState.value = state.copy(
+                                    weight = weight,
+                                    height = height,
+                                    editWeight = height == 0,
+                                    editHeight = weight == 0
+                                )
                                 state = _screenState.value ?: return@withContext
-
                             }
                         }
                     }
@@ -103,9 +101,7 @@ class MyBodyViewModel(
                             downloadPhotoUseCase(photo.id).collect { image ->
                                 if (image is ApiResponse.Success) {
                                     val bitmap = BitmapFactory.decodeByteArray(
-                                        image.data.bytes(),
-                                        0,
-                                        image.data.contentLength().toInt()
+                                        image.data.bytes(), 0, image.data.contentLength().toInt()
                                     )
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
@@ -126,9 +122,7 @@ class MyBodyViewModel(
                             downloadPhotoUseCase(photo.id).collect { image ->
                                 if (image is ApiResponse.Success) {
                                     val bitmap = BitmapFactory.decodeByteArray(
-                                        image.data.bytes(),
-                                        0,
-                                        image.data.contentLength().toInt()
+                                        image.data.bytes(), 0, image.data.contentLength().toInt()
                                     )
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
@@ -143,7 +137,6 @@ class MyBodyViewModel(
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -152,7 +145,9 @@ class MyBodyViewModel(
                 _screenState.value = state.copy(editWeight = true)
             }
 
-            is ClickedOnUpdateHeight -> _screenState.value = state.copy(editHeight = true)
+            is ClickedOnUpdateHeight -> {
+                _screenState.value = state.copy(editHeight = true)
+            }
 
             is EnterHeight -> {
                 _screenState.value = state.copy(inputHeight = intent.height)
@@ -215,11 +210,9 @@ class MyBodyViewModel(
 
             is SaveNewImage -> {
                 viewModelScope.launch {
-                    val bitmap =
-                        MediaStore.Images.Media.getBitmap(
-                            application.contentResolver,
-                            state.imageUri
-                        )
+                    val bitmap = MediaStore.Images.Media.getBitmap(
+                        application.contentResolver, state.imageUri
+                    )
 
                     addNewImageUseCase(bitmap).collect {
                         when (it) {
@@ -247,8 +240,6 @@ class MyBodyViewModel(
 
                                     state = _screenState.value ?: return@withContext
                                 }
-
-                                Log.d("!!!!", "SUCCEED")
                             }
 
                             is ApiResponse.Failure -> {
@@ -279,12 +270,9 @@ class MyBodyViewModel(
 
             is NavigationProcessed -> {
                 _screenState.value = state.copy(
-                    seeStatistics = false,
-                    seeTrainProgress = false,
-                    seeMyProgress = false
+                    seeStatistics = false, seeTrainProgress = false, seeMyProgress = false
                 )
             }
         }
     }
-
 }

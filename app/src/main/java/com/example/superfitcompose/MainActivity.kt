@@ -3,13 +3,22 @@ package com.example.superfitcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -31,7 +40,6 @@ import com.example.superfitcompose.ui.imagelist.ImageListScreen
 import com.example.superfitcompose.ui.main.exercises.AllExercisesScreen
 import com.example.superfitcompose.ui.main.mainscreen.MainScreen
 import com.example.superfitcompose.ui.mybody.MyBodyScreen
-import com.example.superfitcompose.ui.statistics.WeightGraph
 import com.example.superfitcompose.ui.statistics.StatisticsScreen
 import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.example.superfitcompose.ui.trainprogress.TrainProgressScreen
@@ -93,28 +101,35 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun LaunchScreen(navController: NavController,  sharedPreferencesInteractor: SharedPreferencesInteractor = get()) {
+fun LaunchScreen(
+    navController: NavController,
+    sharedPreferencesInteractor: SharedPreferencesInteractor = get()
+) {
     LaunchedEffect(true) {
-        if (sharedPreferencesInteractor.getAccessToken() != ""){
+        if (sharedPreferencesInteractor.getAccessToken() != "") {
             navController.navigate(Routes.MAIN_SCREEN)
-        } else{
+        } else {
             navController.navigate(Routes.LOGIN)
         }
     }
-//    val yStep = 50
-//    val points = listOf(150f, 125f, 100f,250f,200f,330f,300f,90f,120f,285f)
-//    WeightGraph(
-//        modifier = Modifier.width(500.dp),
-//        xValues = ,//(0..9).map { it + 1 },
-//        yValues = (0..6).map { (it + 1) * yStep },
-//        points = points,
-//        paddingSpace = 11.dp,
-//        verticalStep = yStep,
-//        gridColor = Color.White,
-//        lineColor = MaterialTheme.colorScheme.surface,
-//        pointColor = MaterialTheme.colorScheme.surface
-//    )
 
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.auth_screen_bg),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+
+        Text(
+            text = stringResource(id = R.string.super_fit),
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier
+                .padding(start = 37.dp, top = 44.dp, end = 37.dp)
+                .wrapContentHeight(align = Alignment.Top)
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    }
 
 
 }

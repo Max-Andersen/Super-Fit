@@ -83,7 +83,5 @@ fun ExerciseCard(type: TrainingType, cardClick: () -> Unit) {
                 Text(text = data.first, style = MaterialTheme.typography.bodySmall)
             }
         }
-
     }
-
 }

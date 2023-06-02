@@ -87,7 +87,6 @@ fun AllExercisesScreen(
         }
 
         AllExercisesScreenFilling(viewModel::processIntent)
-
     }
 }
 
@@ -108,43 +107,48 @@ fun AllExercisesScreenFilling(cardClicked: (AllExercisesIntent) -> Unit) {
             color = Color.Black
         )
 
-        ExerciseCard(TrainingType.PUSH_UP) {
-            cardClicked(
-                AllExercisesIntent.ClickedOnExercise(
-                    TrainingType.PUSH_UP
-                )
-            )
-        }
-        ExerciseCard(TrainingType.PLANK) {
-            cardClicked(
-                AllExercisesIntent.ClickedOnExercise(
-                    TrainingType.PLANK
-                )
-            )
-        }
-        ExerciseCard(TrainingType.SQUATS) {
-            cardClicked(
-                AllExercisesIntent.ClickedOnExercise(
-                    TrainingType.SQUATS
-                )
-            )
-        }
-        ExerciseCard(TrainingType.CRUNCH) {
-            cardClicked(
-                AllExercisesIntent.ClickedOnExercise(
-                    TrainingType.CRUNCH
-                )
-            )
-        }
-        ExerciseCard(TrainingType.RUNNING) {
-            cardClicked(
-                AllExercisesIntent.ClickedOnExercise(
-                    TrainingType.RUNNING
-                )
-            )
-        }
+        PlaceExerciseCards(cardClicked)
 
         Spacer(modifier = Modifier.size(bottomPadding * 2))
+    }
+}
+
+@Composable
+fun PlaceExerciseCards(cardClicked: (AllExercisesIntent) -> Unit) {
+    ExerciseCard(TrainingType.PUSH_UP) {
+        cardClicked(
+            AllExercisesIntent.ClickedOnExercise(
+                TrainingType.PUSH_UP
+            )
+        )
+    }
+    ExerciseCard(TrainingType.PLANK) {
+        cardClicked(
+            AllExercisesIntent.ClickedOnExercise(
+                TrainingType.PLANK
+            )
+        )
+    }
+    ExerciseCard(TrainingType.SQUATS) {
+        cardClicked(
+            AllExercisesIntent.ClickedOnExercise(
+                TrainingType.SQUATS
+            )
+        )
+    }
+    ExerciseCard(TrainingType.CRUNCH) {
+        cardClicked(
+            AllExercisesIntent.ClickedOnExercise(
+                TrainingType.CRUNCH
+            )
+        )
+    }
+    ExerciseCard(TrainingType.RUNNING) {
+        cardClicked(
+            AllExercisesIntent.ClickedOnExercise(
+                TrainingType.RUNNING
+            )
+        )
     }
 }
 

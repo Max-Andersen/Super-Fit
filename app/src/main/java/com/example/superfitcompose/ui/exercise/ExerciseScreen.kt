@@ -7,7 +7,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -62,8 +61,6 @@ import com.example.superfitcompose.ui.theme.SuperFitComposeTheme
 import com.vmadalin.easypermissions.EasyPermissions
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
-
-internal var lastUpdate = 0L
 
 internal var valueY = 0f
 
@@ -140,9 +137,7 @@ fun ShowLaunchedWarning(
     }
 }
 
-internal var sensitivity = 1.5f
-
-internal var sensorDelay = 500
+internal var sensitivity = 1.0f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -197,7 +192,7 @@ fun ExerciseScreen(
                 Column(modifier = Modifier) {
                     Text(
                         text = with(Locale.ROOT) {
-                            exerciseType.name.lowercase(this)
+                            exerciseType.name.replace('_', ' ').lowercase(this)
                                 .replaceFirstChar { if (it.isLowerCase()) it.titlecase(this) else it.toString() }
                         },
                         style = MaterialTheme.typography.headlineMedium,
@@ -206,6 +201,7 @@ fun ExerciseScreen(
                             .fillMaxWidth()
                             .padding(top = 56.dp)
                     )
+
                     ExerciseCounter(
                         screenState.counter,
                         if (screenState.beginCounterValue == 0) 1 else screenState.beginCounterValue,
@@ -220,10 +216,7 @@ fun ExerciseScreen(
                         onStop = { viewModel.processIntent(ExerciseIntent.FinishExercise) })
                 }
             }
-
         }
-
-
     }
 }
 
@@ -252,16 +245,10 @@ fun PrepareSensors(exerciseType: TrainingType, sendIntent: (ExerciseIntent) -> U
 
     val movementListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
-            val curTime = System.currentTimeMillis()
-
-            if (curTime - lastUpdate > sensorDelay) {
-                lastUpdate = curTime
-                processSensorMovement(event, exerciseType) {
-                    sendIntent(
-                        ExerciseIntent.ExerciseStepDone()
-                    )
-                }
-
+            processSensorMovement(event, exerciseType) {
+                sendIntent(
+                    ExerciseIntent.ExerciseStepDone()
+                )
             }
         }
 
@@ -307,7 +294,7 @@ fun PrepareSensors(exerciseType: TrainingType, sendIntent: (ExerciseIntent) -> U
             else -> { // Push-Ups or Squats, both need ACCELERATION
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
                 sensorManager.registerListener(
-                    movementListener, sensor, SensorManager.SENSOR_DELAY_FASTEST
+                    movementListener, sensor, SensorManager.SENSOR_DELAY_NORMAL
                 )
             }
         }
@@ -336,12 +323,10 @@ fun processSensorMovement(
         if (valueY > sensitivity) {
             movementUp = true
         }
-        //Toast.makeText(context, "$movementDown  $movementUp", Toast.LENGTH_SHORT).show()
 
     }
 
     if (exerciseType == TrainingType.PUSH_UP) {
-        Log.d("SENSOR", "$movementDown  $movementUp")
         if (valueZ < -sensitivity) {
             movementDown = true
         }
@@ -349,8 +334,6 @@ fun processSensorMovement(
         if (valueZ > sensitivity) {
             movementUp = true
         }
-        //Toast.makeText(context, "$movementDown  $movementUp", Toast.LENGTH_SHORT).show()
-
     }
 
 

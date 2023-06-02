@@ -35,8 +35,6 @@ class GetTokensUseCase(
                                 }
                             }
                         }
-
-
                 }
 
                 is ApiResponse.Failure -> {
@@ -46,6 +44,5 @@ class GetTokensUseCase(
         }
 
         return ApiResponse.Failure("Unexpected error", 400)
-
     }
 }

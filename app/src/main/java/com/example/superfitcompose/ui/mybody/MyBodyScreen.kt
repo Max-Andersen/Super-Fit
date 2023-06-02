@@ -58,6 +58,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
 import com.example.superfitcompose.ui.Routes
+import com.example.superfitcompose.ui.shared.DateMapper
 import com.example.superfitcompose.ui.shared.models.PhotoData
 import org.koin.androidx.compose.koinViewModel
 import java.io.ByteArrayOutputStream
@@ -81,21 +82,25 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
     }
 
     if (viewState.editHeight) {
-        EnterBodyParam(
-            type = BodyParamsTypes.Height,
+        EnterBodyParam(type = BodyParamsTypes.Height,
             text = viewState.inputHeight?.toString() ?: "",
             { viewModel.processIntent(MyBodyIntent.CloseEnterHeight) },
-            { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Height)) }
-        ) { newText -> viewModel.processIntent(MyBodyIntent.EnterHeight(newText)) }
+            { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Height)) }) { newText ->
+            if (!newText.contains('0')) {
+                viewModel.processIntent(MyBodyIntent.EnterHeight(newText.toInt()))
+            }
+        }
     }
 
     if (viewState.editWeight) {
-        EnterBodyParam(
-            type = BodyParamsTypes.Weight,
+        EnterBodyParam(type = BodyParamsTypes.Weight,
             text = viewState.inputWeight?.toString() ?: "",
             { viewModel.processIntent(MyBodyIntent.CloseEnterWeight) },
-            { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Weight)) }
-        ) { newText -> viewModel.processIntent(MyBodyIntent.EnterWeight(newText)) }
+            { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Weight)) }) { newText ->
+            if (!newText.contains('0')) {
+                viewModel.processIntent(MyBodyIntent.EnterWeight(newText.toInt()))
+            }
+        }
     }
 
     if (viewState.addImage) {
@@ -118,9 +123,7 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
     }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = MaterialTheme.colorScheme.secondary
+        modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.secondary
     ) {
         Column(
             modifier = Modifier
@@ -133,8 +136,6 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
             AnotherSectionsNavigation(viewModel::processIntent)
         }
     }
-
-
 }
 
 @Composable
@@ -154,22 +155,19 @@ fun MyBodyInformation(weight: Int, height: Int, sendIntent: (MyBodyIntent) -> Un
         MyWeight(weight) { sendIntent(MyBodyIntent.ClickedOnUpdateWeight) }
         MyHeight(height) { sendIntent(MyBodyIntent.ClickedOnUpdateHeight) }
     }
-
 }
 
 @Composable
 fun MyHeight(height: Int, sendIntent: () -> Unit) {
     Column(
-        modifier = Modifier
-            .wrapContentHeight(Alignment.Top),
+        modifier = Modifier.wrapContentHeight(Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(id = R.string.height).format(height.toString()),
             style = MaterialTheme.typography.headlineMedium
         )
-        Text(
-            text = stringResource(id = R.string.edit),
+        Text(text = stringResource(id = R.string.edit),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.clickable { sendIntent() })
     }
@@ -178,8 +176,7 @@ fun MyHeight(height: Int, sendIntent: () -> Unit) {
 @Composable
 fun MyWeight(weight: Int, sendIntent: () -> Unit) {
     Column(
-        modifier = Modifier
-            .wrapContentHeight(Alignment.Top),
+        modifier = Modifier.wrapContentHeight(Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
@@ -187,8 +184,7 @@ fun MyWeight(weight: Int, sendIntent: () -> Unit) {
             text = stringResource(id = R.string.weight).format(weight.toString()),
             style = MaterialTheme.typography.headlineMedium
         )
-        Text(
-            text = stringResource(id = R.string.edit),
+        Text(text = stringResource(id = R.string.edit),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.clickable { sendIntent() })
     }
@@ -196,9 +192,7 @@ fun MyWeight(weight: Int, sendIntent: () -> Unit) {
 
 @Composable
 fun MyProgress(
-    sendIntent: (MyBodyIntent) -> Unit,
-    firstPhoto: PhotoData?,
-    latestPhoto: PhotoData?
+    sendIntent: (MyBodyIntent) -> Unit, firstPhoto: PhotoData?, latestPhoto: PhotoData?
 ) {
     Row(
         modifier = Modifier
@@ -219,8 +213,7 @@ fun MyProgress(
     Box(
         modifier = Modifier
             .wrapContentWidth()
-            .wrapContentHeight(),
-        Alignment.BottomStart
+            .wrapContentHeight(), Alignment.BottomStart
     ) {
         Row(
             modifier = Modifier
@@ -267,61 +260,42 @@ fun MyProgress(
                 Modifier
                     .padding()
                     .background(
-                        MaterialTheme.colorScheme.surface,
-                        shape = RoundedCornerShape(12.dp)
+                        MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp)
                     ),
             ) {
-                Text(
-                    text = firstPhoto?.date?.let { date ->
+                Text(text = firstPhoto?.date?.let { date ->
+                    DateMapper(date)()
+                } ?: "---",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
+                    modifier = Modifier.padding(
+                        start = 12.dp, end = 12.dp, top = 5.dp, bottom = 5.dp
+                    ))
+            }
+            Row(modifier = Modifier.fillMaxWidth(), Arrangement.End, Alignment.Bottom) {
+                Box(
+                    Modifier.background(
+                            MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp)
+                        ),
+                ) {
+                    Text(text = latestPhoto?.date?.let { date ->
                         date.split("-").let {
                             "${it[2]}.${it[1]}.${it[0]}"
                         }
                     } ?: "---",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White,
-                    modifier = Modifier.padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = 5.dp,
-                        bottom = 5.dp
-                    )
-                )
-            }
-            Row(modifier = Modifier.fillMaxWidth(), Arrangement.End, Alignment.Bottom) {
-                Box(
-                    Modifier
-                        .background(
-                            MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(12.dp)
-                        ),
-                ) {
-                    Text(
-                        text = latestPhoto?.date?.let { date ->
-                            date.split("-").let {
-                                "${it[2]}.${it[1]}.${it[0]}"
-                            }
-                        } ?: "---",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                         modifier = Modifier.padding(
-                            start = 12.dp,
-                            end = 12.dp,
-                            top = 5.dp,
-                            bottom = 5.dp
-                        )
-                    )
+                            start = 12.dp, end = 12.dp, top = 5.dp, bottom = 5.dp
+                        ))
                 }
                 Spacer(modifier = Modifier.size(36.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.add_image),
+                Image(painter = painterResource(id = R.drawable.add_image),
                     contentDescription = null,
-                    modifier = Modifier.clickable { sendIntent(MyBodyIntent.ClickedOnAddImage) }
-                )
+                    modifier = Modifier.clickable { sendIntent(MyBodyIntent.ClickedOnAddImage) })
             }
         }
     }
-
-
 }
 
 @Composable
@@ -363,7 +337,7 @@ fun EnterBodyParam(
     text: String,
     close: () -> Unit,
     save: () -> Unit,
-    updateValue: (Int) -> Unit
+    updateValue: (String) -> Unit
 ) {
     Dialog(
         onDismissRequest = {},
@@ -377,8 +351,12 @@ fun EnterBodyParam(
                 contentAlignment = Alignment.Center
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(start = 24.dp, end = 24.dp, bottom = 15.dp, top = 15.dp)
+                    modifier = Modifier.padding(
+                            start = 24.dp,
+                            end = 24.dp,
+                            bottom = 15.dp,
+                            top = 15.dp
+                        )
                 ) {
 
                     Text(
@@ -387,33 +365,25 @@ fun EnterBodyParam(
                         fontSize = 20.sp
                     )
 
-                    TextField(
-                        value = text,
-                        onValueChange = { newText: String ->
-                            updateValue(newText.toInt())
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        label = {
-                            Text(
-                                text = type.name,
-                                color = MaterialTheme.colorScheme.onError,
-                                fontSize = 12.sp
-                            )
-                        },
-                        placeholder = {
-                            Text(
-                                text = stringResource(id = R.string.new_value),
-                                color = MaterialTheme.colorScheme.errorContainer,
-                                fontSize = 16.sp
-                            )
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = Color.White,
-                            containerColor = Color.Transparent
+                    TextField(value = text, onValueChange = { newText: String ->
+                        updateValue(newText)
+                    }, keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
+                    ), label = {
+                        Text(
+                            text = type.name,
+                            color = MaterialTheme.colorScheme.onError,
+                            fontSize = 12.sp
                         )
+                    }, placeholder = {
+                        Text(
+                            text = stringResource(id = R.string.new_value),
+                            color = MaterialTheme.colorScheme.errorContainer,
+                            fontSize = 16.sp
+                        )
+                    }, colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.White, containerColor = Color.Transparent
+                    )
                     )
 
                     Row(
@@ -422,25 +392,19 @@ fun EnterBodyParam(
                             .fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.cancel),
+                        Text(text = stringResource(id = R.string.cancel),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onError,
-                            modifier = Modifier.clickable { close() }
-                        )
+                            modifier = Modifier.clickable { close() })
                         Spacer(modifier = Modifier.size(20.dp))
-                        Text(
-                            text = stringResource(id = R.string.change),
+                        Text(text = stringResource(id = R.string.change),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onError,
-                            modifier = Modifier.clickable { save() }
-                        )
+                            modifier = Modifier.clickable { save() })
                     }
-
                 }
             }
         }
-
     }
 }
 
@@ -461,18 +425,11 @@ fun AddImage(sendIntent: (MyBodyIntent) -> Unit, imageUri: Uri?) {
                 val bytes = ByteArrayOutputStream()
                 it.compress(Bitmap.CompressFormat.PNG, 100, bytes)
                 val path: String = MediaStore.Images.Media.insertImage(
-                    context.contentResolver,
-                    it,
-                    "Title",
-                    null
+                    context.contentResolver, it, "Title", null
                 )
                 sendIntent(MyBodyIntent.NewImageSelected(Uri.parse(path)))
-
             }
-
         }
-
-
 
     Dialog(onDismissRequest = { sendIntent(MyBodyIntent.ClosePhotoSelect) }) {
         Surface(
@@ -484,21 +441,18 @@ fun AddImage(sendIntent: (MyBodyIntent) -> Unit, imageUri: Uri?) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(10.dp)
             ) {
-                Image(
-                    bitmap = imageUri?.let {
-                        ImageDecoder.decodeBitmap(
-                            ImageDecoder
-                                .createSource(LocalContext.current.contentResolver, it)
-                        ).asImageBitmap()
-                    } ?: ImageBitmap.imageResource(id = R.drawable.default_image),
+                Image(bitmap = imageUri?.let {
+                    ImageDecoder.decodeBitmap(
+                        ImageDecoder.createSource(LocalContext.current.contentResolver, it)
+                    ).asImageBitmap()
+                } ?: ImageBitmap.imageResource(id = R.drawable.default_image),
                     contentDescription = null,
                     modifier = Modifier
                         .size(180.dp)
                         .clip(
                             CircleShape
                         ),
-                    contentScale = ContentScale.Crop
-                )
+                    contentScale = ContentScale.Crop)
                 Spacer(modifier = Modifier.height(15.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,

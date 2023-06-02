@@ -9,7 +9,14 @@ import com.example.superfitcompose.data.network.ApiResponse
 import com.example.superfitcompose.data.network.models.TrainingType
 import com.example.superfitcompose.domain.usecases.GetBodyParamsUseCase
 import com.example.superfitcompose.domain.usecases.GetTrainingHistoryUseCase
-import com.example.superfitcompose.ui.statistics.StatisticsIntent.*
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.ClickedOnNavigateBack
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.LoadData
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.NavigationProcessed
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.SelectCrunchHistory
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.SelectPlankHistory
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.SelectPushUpsHistory
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.SelectRunningHistory
+import com.example.superfitcompose.ui.statistics.StatisticsIntent.SelectSquatsHistory
 import kotlinx.coroutines.launch
 
 class StatisticsViewModel(
@@ -51,10 +58,10 @@ class StatisticsViewModel(
                                 it.data.sortedBy { exercise -> exercise.date }.distinct()
                             _screenState.value = state.copy(
                                 pushUpsHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PUSH_UP },
-                                plankHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PUSH_UP },
-                                crunchHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PUSH_UP },
-                                squatsHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PUSH_UP },
-                                runningHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PUSH_UP }
+                                plankHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.PLANK },
+                                crunchHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.CRUNCH },
+                                squatsHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.SQUATS },
+                                runningHistory = sortedAndUnique.filter { exercise -> exercise.exercise == TrainingType.RUNNING }
                             )
                             state = _screenState.value ?: return@collect
                         }
@@ -79,5 +86,4 @@ class StatisticsViewModel(
             }
         }
     }
-
 }

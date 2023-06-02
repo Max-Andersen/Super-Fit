@@ -174,69 +174,79 @@ fun MainScreenFilling(
 
         }
 
-        if (lastTrainings != null) {
-            lastTrainings.first?.let { type ->
-                ExerciseCard(type = type) {
-                    sendIntent(
-                        MainScreenIntent.ClickedOnExercise(
-                            trainingType = type
-                        )
-                    )
-                }
-            }
-
-            lastTrainings.second?.let { type ->
-                ExerciseCard(type = type) {
-                    sendIntent(
-                        MainScreenIntent.ClickedOnExercise(
-                            trainingType = type
-                        )
-                    )
-                }
-            }
-        } else {
-            ExerciseCard(type = TrainingType.PUSH_UP) {
-                sendIntent(
-                    MainScreenIntent.ClickedOnExercise(
-                        trainingType = TrainingType.PUSH_UP
-                    )
-                )
-            }
-
-            ExerciseCard(type = TrainingType.PLANK) {
-                sendIntent(
-                    MainScreenIntent.ClickedOnExercise(
-                        trainingType = TrainingType.PLANK
-                    )
-                )
-            }
-        }
-
+        PlaceLastTrainings(lastTrainings, sendIntent)
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Row(
-            modifier = Modifier
-                .padding(bottom = 34.dp + bottomPadding)
-                .wrapContentWidth(Alignment.CenterHorizontally)
-                .wrapContentHeight(Alignment.Bottom)
-                .clickable { sendIntent(MainScreenIntent.ClickedOnSignOut) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.left),
-                colorFilter = ColorFilter.tint(color = Color.Black),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = stringResource(id = R.string.sign_out),
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.Black
+        PlaceSignOutBlock(sendIntent)
+    }
+}
+
+@Composable
+fun PlaceSignOutBlock(sendIntent: (MainScreenIntent) -> Unit) {
+    Row(
+        modifier = Modifier
+            .padding(bottom = 34.dp + bottomPadding)
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .wrapContentHeight(Alignment.Bottom)
+            .clickable { sendIntent(MainScreenIntent.ClickedOnSignOut) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.left),
+            colorFilter = ColorFilter.tint(color = Color.Black),
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.size(8.dp))
+        Text(
+            text = stringResource(id = R.string.sign_out),
+            style = MaterialTheme.typography.headlineSmall,
+            color = Color.Black
+        )
+    }
+}
+
+@Composable
+fun PlaceLastTrainings(
+    lastTrainings: Pair<TrainingType?, TrainingType?>?,
+    sendIntent: (MainScreenIntent) -> Unit
+) {
+    if (lastTrainings != null) {
+        lastTrainings.first?.let { type ->
+            ExerciseCard(type = type) {
+                sendIntent(
+                    MainScreenIntent.ClickedOnExercise(
+                        trainingType = type
+                    )
+                )
+            }
+        }
+
+        lastTrainings.second?.let { type ->
+            ExerciseCard(type = type) {
+                sendIntent(
+                    MainScreenIntent.ClickedOnExercise(
+                        trainingType = type
+                    )
+                )
+            }
+        }
+    } else {
+        ExerciseCard(type = TrainingType.PUSH_UP) {
+            sendIntent(
+                MainScreenIntent.ClickedOnExercise(
+                    trainingType = TrainingType.PUSH_UP
+                )
             )
         }
 
-
+        ExerciseCard(type = TrainingType.PLANK) {
+            sendIntent(
+                MainScreenIntent.ClickedOnExercise(
+                    trainingType = TrainingType.PLANK
+                )
+            )
+        }
     }
 }
 
@@ -329,13 +339,9 @@ fun MyBodyCard(weight: Int?, height: Int?, clicked: () -> Unit) {
                         painter = painterResource(id = R.drawable.little_right),
                         contentDescription = null
                     )
-
                 }
-
-
             }
         }
-
     }
 }
 

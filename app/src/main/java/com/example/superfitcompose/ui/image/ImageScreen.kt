@@ -7,7 +7,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.superfitcompose.R
+import com.example.superfitcompose.ui.shared.DateMapper
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -55,7 +55,7 @@ fun ImageScreen(
                 .padding(),
             containerColor = MaterialTheme.colorScheme.secondary,
             topBar = {
-                Box(modifier = Modifier.padding(start = 20.dp, top = 40.dp)){
+                Box(modifier = Modifier.padding(start = 20.dp, top = 40.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.left),
                         contentDescription = null,
@@ -63,7 +63,6 @@ fun ImageScreen(
                             .clickable { viewModel.processIntent(ImageIntent.ClickedOnNavigateBack) }
                     )
                 }
-
             },
             bottomBar = {
                 Box(
@@ -75,7 +74,9 @@ fun ImageScreen(
                         ),
                 ) {
                     Text(
-                        text = viewState.date ?: "---",
+                        text = viewState.date?.let { date ->
+                            DateMapper(date)()
+                        } ?: "---",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                         modifier = Modifier.padding(
@@ -88,7 +89,6 @@ fun ImageScreen(
                 }
             }
         ) { paddings ->
-
             ZoomableImage(
                 bitmap = viewState.image
                     ?: ImageBitmap.imageResource(id = R.drawable.default_image),
@@ -96,8 +96,6 @@ fun ImageScreen(
                     .fillMaxSize()
                     .padding(paddings)
             )
-
-
         }
     }
 }

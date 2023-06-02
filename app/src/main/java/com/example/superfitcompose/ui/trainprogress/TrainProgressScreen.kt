@@ -126,112 +126,143 @@ fun TrainProgressScreen(
         Box(modifier = Modifier
             .fillMaxSize()
             .drawBehind {
-                drawCircle(
-                    surfaceColor,
-                    4.dp.toPx(),
-                    center = calculateOffset(imageSize, pushUpsPoint),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-                pushUpsLine.forEach {
-                    drawLine(
-                        surfaceColor,
-                        calculateOffset(imageSize, it.first),
-                        calculateOffset(imageSize, it.second),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
-
-
-                drawCircle(
-                    surfaceColor,
-                    4.dp.toPx(),
-                    center = calculateOffset(imageSize, plankPoint),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-                plankLine.forEach {
-                    drawLine(
-                        surfaceColor,
-                        calculateOffset(imageSize, it.first),
-                        calculateOffset(imageSize, it.second),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
-
-
-                drawCircle(
-                    surfaceColor,
-                    4.dp.toPx(),
-                    center = calculateOffset(imageSize, crunchPoint),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-                crunchLine.forEach {
-                    drawLine(
-                        surfaceColor,
-                        calculateOffset(imageSize, it.first),
-                        calculateOffset(imageSize, it.second),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
-
-                drawCircle(
-                    surfaceColor,
-                    4.dp.toPx(),
-                    center = calculateOffset(imageSize, squatsPoint),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-                squatsLine.forEach {
-                    drawLine(
-                        surfaceColor,
-                        calculateOffset(imageSize, it.first),
-                        calculateOffset(imageSize, it.second),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
-
-                drawCircle(
-                    surfaceColor,
-                    4.dp.toPx(),
-                    center = calculateOffset(imageSize, runningPoint),
-                    style = Stroke(width = 2.dp.toPx())
-                )
-                runningLine.forEach {
-                    drawLine(
-                        surfaceColor,
-                        calculateOffset(imageSize, it.first),
-                        calculateOffset(imageSize, it.second),
-                        strokeWidth = 2.dp.toPx()
-                    )
-                }
+                drawLines(this, surfaceColor, imageSize)
             }) {
 
             val density = LocalDensity.current
 
-            viewState.pushUpsTrainProgress?.let {
-                OnDrawText(TrainingType.PUSH_UP, density, imageSize,
-                    it
-                )
-            }
-            viewState.plankTrainProgress?.let {
-                OnDrawText(TrainingType.PLANK, density, imageSize,
-                    it
-                )
-            }
-            viewState.crunchTrainProgress?.let {
-                OnDrawText(TrainingType.CRUNCH, density, imageSize,
-                    it
-                )
-            }
-            viewState.squatsTrainProgress?.let {
-                OnDrawText(TrainingType.SQUATS, density, imageSize,
-                    it
-                )
-            }
-            viewState.runningTrainProgress?.let {
-                OnDrawText(TrainingType.RUNNING, density, imageSize,
-                    it
-                )
-            }
+            PlaceOnDrawTexts(
+                density,
+                imageSize,
+                viewState.pushUpsTrainProgress,
+                viewState.plankTrainProgress,
+                viewState.crunchTrainProgress,
+                viewState.squatsTrainProgress,
+                viewState.runningTrainProgress
+            )
+        }
+    }
+}
 
+@Composable
+fun PlaceOnDrawTexts(
+    density: Density,
+    imageSize: IntSize,
+    pushUpsTrainProgress: TrainProgress?,
+    plankTrainProgress: TrainProgress?,
+    crunchTrainProgress: TrainProgress?,
+    squatsTrainProgress: TrainProgress?,
+    runningTrainProgress: TrainProgress?
+) {
+    pushUpsTrainProgress?.let {
+        OnDrawText(
+            TrainingType.PUSH_UP, density, imageSize,
+            it
+        )
+    }
+    plankTrainProgress?.let {
+        OnDrawText(
+            TrainingType.PLANK, density, imageSize,
+            it
+        )
+    }
+    crunchTrainProgress?.let {
+        OnDrawText(
+            TrainingType.CRUNCH, density, imageSize,
+            it
+        )
+    }
+    squatsTrainProgress?.let {
+        OnDrawText(
+            TrainingType.SQUATS, density, imageSize,
+            it
+        )
+    }
+    runningTrainProgress?.let {
+        OnDrawText(
+            TrainingType.RUNNING, density, imageSize,
+            it
+        )
+    }
+}
+
+fun drawLines(drawScope: DrawScope, surfaceColor: Color, imageSize: IntSize) {
+    drawScope.apply {
+        drawCircle(
+            surfaceColor,
+            4.dp.toPx(),
+            center = calculateOffset(imageSize, pushUpsPoint),
+            style = Stroke(width = 2.dp.toPx())
+        )
+        pushUpsLine.forEach {
+            drawLine(
+                surfaceColor,
+                calculateOffset(imageSize, it.first),
+                calculateOffset(imageSize, it.second),
+                strokeWidth = 2.dp.toPx()
+            )
+        }
+
+
+        drawCircle(
+            surfaceColor,
+            4.dp.toPx(),
+            center = calculateOffset(imageSize, plankPoint),
+            style = Stroke(width = 2.dp.toPx())
+        )
+        plankLine.forEach {
+            drawLine(
+                surfaceColor,
+                calculateOffset(imageSize, it.first),
+                calculateOffset(imageSize, it.second),
+                strokeWidth = 2.dp.toPx()
+            )
+        }
+
+
+        drawCircle(
+            surfaceColor,
+            4.dp.toPx(),
+            center = calculateOffset(imageSize, crunchPoint),
+            style = Stroke(width = 2.dp.toPx())
+        )
+        crunchLine.forEach {
+            drawLine(
+                surfaceColor,
+                calculateOffset(imageSize, it.first),
+                calculateOffset(imageSize, it.second),
+                strokeWidth = 2.dp.toPx()
+            )
+        }
+
+        drawCircle(
+            surfaceColor,
+            4.dp.toPx(),
+            center = calculateOffset(imageSize, squatsPoint),
+            style = Stroke(width = 2.dp.toPx())
+        )
+        squatsLine.forEach {
+            drawLine(
+                surfaceColor,
+                calculateOffset(imageSize, it.first),
+                calculateOffset(imageSize, it.second),
+                strokeWidth = 2.dp.toPx()
+            )
+        }
+
+        drawCircle(
+            surfaceColor,
+            4.dp.toPx(),
+            center = calculateOffset(imageSize, runningPoint),
+            style = Stroke(width = 2.dp.toPx())
+        )
+        runningLine.forEach {
+            drawLine(
+                surfaceColor,
+                calculateOffset(imageSize, it.first),
+                calculateOffset(imageSize, it.second),
+                strokeWidth = 2.dp.toPx()
+            )
         }
     }
 }
@@ -272,31 +303,35 @@ fun OnDrawText(
     var titleText = ""
     var lastTrainText = ""
 
-    when(type){
+    when (type) {
         TrainingType.PUSH_UP -> {
             xPadding = pushUpsX
             yPaddings = pushUpsY
             titleText = stringResource(id = R.string.push_ups)
             lastTrainText = stringResource(id = R.string.last_train_times)
         }
+
         TrainingType.PLANK -> {
             xPadding = plankX
             yPaddings = plankY
             titleText = stringResource(id = R.string.plank)
             lastTrainText = stringResource(R.string.last_train_seconds)
         }
+
         TrainingType.CRUNCH -> {
             xPadding = crunchX
             yPaddings = crunchY
             titleText = stringResource(id = R.string.crunch)
             lastTrainText = stringResource(R.string.last_train_times)
         }
+
         TrainingType.SQUATS -> {
             xPadding = squatsX
             yPaddings = squatsY
             titleText = stringResource(id = R.string.squats)
             lastTrainText = stringResource(R.string.last_train_times)
         }
+
         TrainingType.RUNNING -> {
             xPadding = runningX
             yPaddings = runningY
@@ -304,7 +339,6 @@ fun OnDrawText(
             lastTrainText = stringResource(R.string.last_train_meters)
         }
     }
-
 
     val titlePadding = calculateOffset(imageSize, Offset(xPadding, yPaddings[0]))
     val lastTrainPadding = calculateOffset(imageSize, Offset(xPadding, yPaddings[1]))
