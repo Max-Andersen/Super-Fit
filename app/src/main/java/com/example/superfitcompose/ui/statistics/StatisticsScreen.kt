@@ -102,11 +102,14 @@ fun StatisticsScreen(
                 if (viewState.weightHistory != null) {
                     val yStep = 20
                     val testPoints = listOf(120f, 125f, 100f, 50f, 80f, 25f, 130f, 90f, 120f, 60f)
-                    val testX = (0..9).map { (it + 1).toString() }
+                    val testX = (0..9).map {
+                        val char = (it + 1).toString()
+                        "$char-$char-$char"
+                    }
                     val testY = (0..6).map { (it + 1) * yStep }
 
                     val xValues = viewState.weightHistory!!.flatMap { listOf(it.date) }
-                    val yValues = (0..6).map { (it + 1) * yStep }   // listOf(20, 40, 60, 80, 100)
+                    val yValues = (0..6).map { (it + 1) * yStep }
                     val points = viewState.weightHistory!!.flatMap { listOf(it.weight.toFloat()) }
 
                     val paddingSpace = 20.dp
@@ -117,17 +120,16 @@ fun StatisticsScreen(
                             .horizontalScroll(rememberScrollState())
                             .padding(top = 25.dp, end = 25.dp)
                             .height(240.dp)
-                            .width(testPoints.size * 50.dp),
-                        xValues =  testX,
-                        yValues = testY,
-                        points = testPoints,
+                            .width(points.size * 40.dp),
+                        xValues = xValues,
+                        yValues = yValues,
+                        points = points,
                         paddingSpace = paddingSpace,
                         verticalStep = yStep,
                         gridColor = Color.White,
                         lineColor = MaterialTheme.colorScheme.surface,
                         pointColor = MaterialTheme.colorScheme.surface,
                     )
-
 
 
 //                    Canvas(

@@ -73,7 +73,7 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
     val viewState by viewModel.getViewState().observeAsState(MyBodyViewState())
 
     BackHandler(true) {
-        navController.navigate(Routes.MAIN_SCREEN){
+        navController.navigate(Routes.MAIN_SCREEN) {
             popUpTo(
                 navController.graph.id
             )
@@ -272,7 +272,11 @@ fun MyProgress(
                     ),
             ) {
                 Text(
-                    text = firstPhoto?.date ?: "---",
+                    text = firstPhoto?.date?.let { date ->
+                        date.split("-").let {
+                            "${it[2]}.${it[1]}.${it[0]}"
+                        }
+                    } ?: "---",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White,
                     modifier = Modifier.padding(
@@ -292,7 +296,11 @@ fun MyProgress(
                         ),
                 ) {
                     Text(
-                        text = latestPhoto?.date ?: "---",
+                        text = latestPhoto?.date?.let { date ->
+                            date.split("-").let {
+                                "${it[2]}.${it[1]}.${it[0]}"
+                            }
+                        } ?: "---",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,
                         modifier = Modifier.padding(

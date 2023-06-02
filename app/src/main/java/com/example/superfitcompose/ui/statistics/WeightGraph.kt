@@ -17,9 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Created by Saurabh
- */
 @Composable
 fun WeightGraph(
     modifier: Modifier,
@@ -49,26 +46,19 @@ fun WeightGraph(
         ) {
             val xAxisSpace = (size.width - paddingSpace.toPx()) / xValues.size
             val yAxisSpace = size.height / yValues.size
-            /** placing x axis points */
-
-//            drawLine(
-//                color = gridColor,
-//                start = Offset(100f, size.height - 100),
-//                end = Offset(size.width, size.height - 100),
-//                strokeWidth = 4f
-//            )
-
 
             drawLine(
                 color = gridColor,
                 start = Offset(size.width, 0f),
-                end = Offset(size.width, size.height - 100),
+                end = Offset(size.width, size.height - 95),
                 strokeWidth = 4f
             )
 
             for (i in xValues.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    xValues[i],
+                    xValues[i].split("-").let {
+                        "${it[2]}.${it[1]}.${it[0]}"
+                    },
                     xAxisSpace * (i + 1),
                     size.height - 30,
                     textPaint
@@ -84,11 +74,10 @@ fun WeightGraph(
             drawLine(
                 color = gridColor,
                 start = Offset(100f, 0f),
-                end = Offset(100f, size.height - 100),
+                end = Offset(100f, size.height - 95),
                 strokeWidth = 4f
             )
 
-            /** placing y axis points */
             for (i in yValues.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
                     "${yValues[i]}",
@@ -104,20 +93,17 @@ fun WeightGraph(
                 )
             }
 
-
-            /** placing our x axis points */
             for (i in points.indices) {
                 val x1 = xAxisSpace * (i + 1)// xValues[i]
                 val y1 = size.height - (yAxisSpace * (points[i] / verticalStep.toFloat()))
                 coordinates.add(PointF(x1, y1))
-                /** drawing circles to indicate all the points */
                 drawCircle(
                     color = pointColor,
                     radius = 15f,
                     center = Offset(x1, y1)
                 )
             }
-            /** calculating the connection points */
+
             for (i in 1 until coordinates.size) {
                 controlPoints1.add(
                     PointF(
@@ -132,7 +118,7 @@ fun WeightGraph(
                     )
                 )
             }
-            /** drawing the path */
+
             val stroke = Path().apply {
                 reset()
                 moveTo(coordinates.first().x, coordinates.first().y)
