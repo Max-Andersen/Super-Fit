@@ -75,7 +75,7 @@ fun ImageScreen(
                 ) {
                     Text(
                         text = viewState.date?.let { date ->
-                            DateMapper(date)()
+                            DateMapper()(date)
                         } ?: "---",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.White,

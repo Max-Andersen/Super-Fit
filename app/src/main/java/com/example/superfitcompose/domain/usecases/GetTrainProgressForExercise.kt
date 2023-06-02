@@ -5,10 +5,14 @@ import com.example.superfitcompose.ui.trainprogress.TrainProgress
 
 class GetTrainProgressForExercise {
     operator fun invoke(trainings: List<Training>): TrainProgress {
-        val progress = ((trainings.lastOrNull()?.repeatCount?.toFloat()
+        var progress = ((trainings.lastOrNull()?.repeatCount?.toFloat()
             ?: 0f) - (trainings.dropLast(1).lastOrNull()?.repeatCount?.toFloat()
             ?: 0f)) / (trainings.dropLast(1).lastOrNull()?.repeatCount?.toFloat()
             ?: 1f)
+
+        if (trainings.size == 1){
+            progress = 1f
+        }
 
         return TrainProgress(
             lastTrain = trainings.lastOrNull()?.repeatCount ?: 0,

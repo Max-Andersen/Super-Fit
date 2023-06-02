@@ -1,11 +1,10 @@
 package com.example.superfitcompose.ui.shared
 
-class DateMapper(private val date: String) {
+class DateMapper {
 
-    operator fun invoke(): String {
+    operator fun invoke(date: String): String {
         return date.split("-").let {
             "${it[2]}.${it[1]}.${it[0]}"
         }
     }
-
 }
