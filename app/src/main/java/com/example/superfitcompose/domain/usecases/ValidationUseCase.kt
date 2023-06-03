@@ -2,7 +2,7 @@ package com.example.superfitcompose.domain.usecases
 
 class ValidationUseCase {
 
-    private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$"
+    private val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+.[a-zA-Z0-9]+\$"
 
 //    private fun String.isEmailValid(): Boolean {
 //        return android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
@@ -15,9 +15,14 @@ class ValidationUseCase {
     operator fun invoke(
         email: String,
         code: String? = null,
-        codeConfirmation: String? = null
+        codeConfirmation: String? = null,
+        userName: String? = null
     ): String {
         var answer = ""
+
+        if (userName?.isEmpty() == true){
+            answer += "Username is Empty!\n"
+        }
 
         if ((code != null || codeConfirmation != null) && code != codeConfirmation) {
             answer += "Code and confirmation not equal!\n"

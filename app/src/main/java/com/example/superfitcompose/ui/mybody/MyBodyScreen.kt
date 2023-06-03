@@ -86,9 +86,7 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
             text = viewState.inputHeight?.toString() ?: "",
             { viewModel.processIntent(MyBodyIntent.CloseEnterHeight) },
             { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Height)) }) { newText ->
-            if (!newText.contains('0')) {
-                viewModel.processIntent(MyBodyIntent.EnterHeight(newText.toInt()))
-            }
+            viewModel.processIntent(MyBodyIntent.EnterHeight(newText.toIntOrNull() ?: 0))
         }
     }
 
@@ -97,9 +95,7 @@ fun MyBodyScreen(navController: NavController, viewModel: MyBodyViewModel = koin
             text = viewState.inputWeight?.toString() ?: "",
             { viewModel.processIntent(MyBodyIntent.CloseEnterWeight) },
             { viewModel.processIntent(MyBodyIntent.SaveBodyParams(BodyParamsTypes.Weight)) }) { newText ->
-            if (!newText.contains('0')) {
-                viewModel.processIntent(MyBodyIntent.EnterWeight(newText.toInt()))
-            }
+            viewModel.processIntent(MyBodyIntent.EnterWeight(newText.toIntOrNull() ?: 0))
         }
     }
 
@@ -275,8 +271,8 @@ fun MyProgress(
             Row(modifier = Modifier.fillMaxWidth(), Arrangement.End, Alignment.Bottom) {
                 Box(
                     Modifier.background(
-                            MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp)
-                        ),
+                        MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp)
+                    ),
                 ) {
                     Text(text = latestPhoto?.date?.let { date ->
                         date.split("-").let {
@@ -352,11 +348,11 @@ fun EnterBodyParam(
             ) {
                 Column(
                     modifier = Modifier.padding(
-                            start = 24.dp,
-                            end = 24.dp,
-                            bottom = 15.dp,
-                            top = 15.dp
-                        )
+                        start = 24.dp,
+                        end = 24.dp,
+                        bottom = 15.dp,
+                        top = 15.dp
+                    )
                 ) {
 
                     Text(

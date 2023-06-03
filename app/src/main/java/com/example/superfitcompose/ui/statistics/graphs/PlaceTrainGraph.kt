@@ -52,7 +52,7 @@ fun PlaceTrainGraph(
             points =
                 plankHistory?.flatMap { listOf(it.repeatCount.toFloat()) }
                     ?: listOf()
-            yValues = listOf(5, 10, 15, 20, 25)
+            yValues = listOf(5, 10, 15, 20, 25, 30)
             xValues = plankHistory?.flatMap { listOf(it.date) }
                 ?: listOf()
 

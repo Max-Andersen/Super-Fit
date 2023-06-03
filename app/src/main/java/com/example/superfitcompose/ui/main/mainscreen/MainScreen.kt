@@ -75,7 +75,11 @@ fun MainScreen(navController: NavController, viewModel: MainScreenViewModel = ko
 
     if (viewState.signOut) {
         viewModel.processIntent(MainScreenIntent.NavigationProcessed)
-        navController.navigate(Routes.LOGIN)
+        navController.navigate(Routes.LOGIN){
+            popUpTo(
+                navController.graph.id
+            )
+        }
     }
 
     if (viewState.navigateToTrainingType != null) {

@@ -33,12 +33,12 @@ import com.example.superfitcompose.ui.mybody.MyBodyIntent.NavigationProcessed
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.NewImageSelected
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.SaveBodyParams
 import com.example.superfitcompose.ui.mybody.MyBodyIntent.SaveNewImage
+import com.example.superfitcompose.ui.shared.TimeStampToDateMapper
 import com.example.superfitcompose.ui.shared.models.PhotoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
@@ -106,8 +106,7 @@ class MyBodyViewModel(
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
                                             firstPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
-                                                    .toString().subSequence(0, 10) as String,
+                                                TimeStampToDateMapper()(photo.uploaded),
                                                 photo.id,
                                                 bitmap.asImageBitmap()
                                             )
@@ -127,8 +126,7 @@ class MyBodyViewModel(
                                     withContext(Dispatchers.Main) {
                                         _screenState.value = state.copy(
                                             latestPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(photo.uploaded * 1000L)
-                                                    .toString().subSequence(0, 10) as String,
+                                                TimeStampToDateMapper()(photo.uploaded),
                                                 photo.id,
                                                 bitmap.asImageBitmap()
                                             )
@@ -221,8 +219,7 @@ class MyBodyViewModel(
                                     if (state.firstPhoto == null) {
                                         _screenState.value = state.copy(
                                             firstPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(it.data.uploaded * 1000L)
-                                                    .toString().subSequence(0, 10) as String,
+                                                TimeStampToDateMapper()(it.data.uploaded),
                                                 it.data.id,
                                                 bitmap.asImageBitmap()
                                             )
@@ -230,8 +227,7 @@ class MyBodyViewModel(
                                     } else {
                                         _screenState.value = state.copy(
                                             latestPhoto = PhotoData(
-                                                Instant.fromEpochMilliseconds(it.data.uploaded * 1000L)
-                                                    .toString().subSequence(0, 10) as String,
+                                                TimeStampToDateMapper()(it.data.uploaded),
                                                 it.data.id,
                                                 bitmap.asImageBitmap()
                                             )

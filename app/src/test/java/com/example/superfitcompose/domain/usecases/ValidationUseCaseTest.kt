@@ -8,6 +8,7 @@ internal class ValidationUseCaseTest {
 
     private lateinit var useCase: ValidationUseCase
 
+    private val userNameIsEmpty = "Username is Empty!\n"
     private val codesNotEquals = "Code and confirmation not equal!\n"
     private val extraneousCharsInCodes = "Code can not contains any symbols except numbers\n"
     private val wrongLengthOfCodes = "Possible length of code is 4 digits\n"
@@ -22,6 +23,7 @@ internal class ValidationUseCaseTest {
     fun `test with normal inputs`() {
         val email = "test@test.test"
         val code = "1234"
+        val userName = "qwe"
         assertEquals("", useCase.invoke(email, code, code))
     }
 
@@ -29,9 +31,10 @@ internal class ValidationUseCaseTest {
     fun `test with all bad inputs`() {
         val email = "testtest.test"
         val code = "1234!"
+        val userName = ""
         assertEquals(
-            codesNotEquals + extraneousCharsInCodes + wrongLengthOfCodes + emailIncorrect,
-            useCase.invoke(email, code, code + "6"),
+            userNameIsEmpty + codesNotEquals + extraneousCharsInCodes + wrongLengthOfCodes + emailIncorrect,
+            useCase.invoke(email, code, code + "6", userName),
         )
     }
 
@@ -61,6 +64,14 @@ internal class ValidationUseCaseTest {
         val email = "test@test.test"
         val code = "123"
         assertEquals(codesNotEquals, useCase.invoke(email, code + "4", code + "5"))
+    }
+
+    @Test
+    fun `test with empty username`() {
+        val email = "test@test.test"
+        val code = "1234"
+        val userName = ""
+        assertEquals(userNameIsEmpty, useCase.invoke(email, code, code, userName))
     }
 
 }

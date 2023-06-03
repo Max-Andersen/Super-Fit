@@ -1,7 +1,6 @@
 package com.example.superfitcompose.ui.imagelist
 
 import android.graphics.BitmapFactory
-import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,11 +15,11 @@ import com.example.superfitcompose.ui.imagelist.ImageListIntent.ClickedOnImage
 import com.example.superfitcompose.ui.imagelist.ImageListIntent.LoadData
 import com.example.superfitcompose.ui.imagelist.ImageListIntent.NavigationBack
 import com.example.superfitcompose.ui.imagelist.ImageListIntent.NavigationProcessed
+import com.example.superfitcompose.ui.shared.TimeStampToDateMapper
 import com.example.superfitcompose.ui.shared.models.PhotoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 
 
 class ImageListViewModel(
@@ -59,8 +58,7 @@ class ImageListViewModel(
 
                                     photoList.add(
                                         PhotoData(
-                                            Instant.fromEpochMilliseconds(photoId.uploaded * 1000L)
-                                                .toString().subSequence(0, 10) as String,
+                                            TimeStampToDateMapper()(photoId.uploaded),
                                             photoId.id,
                                             bitmap.asImageBitmap()
                                         )

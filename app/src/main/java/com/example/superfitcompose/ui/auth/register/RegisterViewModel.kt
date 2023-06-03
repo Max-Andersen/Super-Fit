@@ -64,8 +64,9 @@ class RegisterViewModel(
                 val email = state.email.trim()
                 val code = state.code.trim()
                 val codeConfirmation = state.codeConfirmation.trim()
+                val userName = state.username.trim()
 
-                val validationAnswer = validationUseCase(email, code, codeConfirmation)
+                val validationAnswer = validationUseCase(email, code, codeConfirmation, userName)
 
                 if (validationAnswer.isEmpty()) {
                     viewModelScope.launch {
