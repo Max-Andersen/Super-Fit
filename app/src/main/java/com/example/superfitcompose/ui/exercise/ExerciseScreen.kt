@@ -276,13 +276,13 @@ fun PrepareSensors(exerciseType: TrainingType, sendIntent: (ExerciseIntent) -> U
         sendIntent(ExerciseIntent.LoadExerciseData(exerciseType))
 
         when (exerciseType) {
-            TrainingType.PLANK -> {
-                // View Model will start timer for plank
-            }
-
-            TrainingType.CRUNCH -> {
-
-            }
+//            TrainingType.PLANK -> {
+//                // View Model will start timer for plank
+//            }
+//
+//            TrainingType.CRUNCH -> {
+//
+//            }
 
             TrainingType.RUNNING -> {
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
@@ -291,11 +291,15 @@ fun PrepareSensors(exerciseType: TrainingType, sendIntent: (ExerciseIntent) -> U
                 )
             }
 
-            else -> { // Push-Ups or Squats, both need ACCELERATION
+            TrainingType.SQUATS, TrainingType.PUSH_UP -> {
                 val sensor: Sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
                 sensorManager.registerListener(
                     movementListener, sensor, SensorManager.SENSOR_DELAY_NORMAL
                 )
+            }
+
+            else -> { // Push-Ups or Squats, both need ACCELERATION
+
             }
         }
     }
@@ -323,7 +327,6 @@ fun processSensorMovement(
         if (valueY > sensitivity) {
             movementUp = true
         }
-
     }
 
     if (exerciseType == TrainingType.PUSH_UP) {

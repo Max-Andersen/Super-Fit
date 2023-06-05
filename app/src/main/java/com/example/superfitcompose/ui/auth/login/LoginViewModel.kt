@@ -3,7 +3,7 @@ package com.example.superfitcompose.ui.auth.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.superfitcompose.IntentHandler
+import com.example.superfitcompose.ui.IntentHandler
 import com.example.superfitcompose.domain.usecases.ValidationUseCase
 import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.EnterCodeButtonClicked
 import com.example.superfitcompose.ui.auth.login.LoginScreenIntent.ErrorProcessed

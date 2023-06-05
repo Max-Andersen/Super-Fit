@@ -13,14 +13,14 @@ internal class GetTrainProgressForExerciseTest {
     @Test
     fun `1 element test`() {
         val expected = TrainProgress(lastTrain = 10, progress = 100)
-        assertEquals(
-            expected,
-            progressCounter(
-                listOf(
-                    Training("", TrainingType.RUNNING, repeatCount = 10),
-                )
+
+        val actual = progressCounter(
+            listOf(
+                Training("", TrainingType.RUNNING, repeatCount = 10),
             )
         )
+
+        assertEquals(expected, actual)
     }
 
     @Test

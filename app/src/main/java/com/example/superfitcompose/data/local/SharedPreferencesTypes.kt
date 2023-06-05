@@ -1,4 +1,4 @@
-package com.example.superfitcompose
+package com.example.superfitcompose.data.local
 
 class SharedPreferencesTypes {
     companion object{

@@ -3,7 +3,7 @@ package com.example.superfitcompose.ui.main.exercises
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.superfitcompose.IntentHandler
+import com.example.superfitcompose.ui.IntentHandler
 import com.example.superfitcompose.ui.main.exercises.AllExercisesIntent.ClickedOnExercise
 import com.example.superfitcompose.ui.main.exercises.AllExercisesIntent.NavigationProcessed
 

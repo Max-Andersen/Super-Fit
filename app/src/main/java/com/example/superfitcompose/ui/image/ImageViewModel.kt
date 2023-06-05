@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.superfitcompose.IntentHandler
+import com.example.superfitcompose.ui.IntentHandler
 import com.example.superfitcompose.data.network.ApiResponse
 import com.example.superfitcompose.domain.usecases.DownloadPhotoUseCase
 import com.example.superfitcompose.ui.image.ImageIntent.ClickedOnNavigateBack

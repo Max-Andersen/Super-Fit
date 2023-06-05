@@ -38,10 +38,10 @@ fun PlaceWeightGraph(weightHistory: List<BodyParameters>?) {
                 .horizontalScroll(rememberScrollState())
                 .padding(top = 25.dp, end = 25.dp)
                 .height(240.dp)
-                .width(points.size * 50.dp),
-            xValues = xValues,
-            yValues = yValues,
-            points = points,
+                .width(testPoints.size * 50.dp),
+            xValues = testX,
+            yValues = testY,
+            points = testPoints,
             paddingSpace = paddingSpace,
             verticalStep = yStep,
             gridColor = Color.White,
