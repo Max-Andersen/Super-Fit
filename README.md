@@ -31,20 +31,20 @@
 
 |  Splash & Login  |  Register  |  Main Screen & All exercises  |
 |:---|:---|:---|
-|  <img src="media/splash_login.gif" width=250/>  |  <img src="media/register" width=250/>  |  <img src="media/main_all_exercises.gif" width=250/>  |
+|  <img src="media/splash_login.gif" width=250/>  |  <img src="media/register.gif" width=250/>  |  <img src="media/main_all_exercises.gif" width=250/>  |
 
 |  My body  |  Image list & image  |  Train progress  |
 |:---|:---|:---|
-|  <img src="media/my_body.gif" width=250/>  |   <img src="media/splash_login.gif" width=250/> | <img src="media/splash_login.gif" width=250/>   |
+|  <img src="media/my_body.gif" width=250/>  |   <img src="media/image_list.gif" width=250/> | <img src="media/train_progress.gif" width=250/>   |
 
 |  Statistics  |  Graph with a lot of information  |  Push up (с изменением положения по оси Z)  |
 |:---|:---|:---|
-|  <img src="media/splash_login.gif" width=250/>  |  <img src="media/splash_login.gif" width=250/>  |  <img src="media/splash_login.gif" width=250/>  |
+|  <img src="media/statistics.gif" width=250/>  |  <img src="media/beautiful_graph.gif" width=250/>  |  <img src="media/push_ups.gif" width=250/>  |
 
 |  Squats (с изменением положения по оси Y)  |  Plank  |  Crunch  |
 |:---|:---|:---|
-|  <img src="media/splash_login.gif" width=250/>  |  <img src="media/splash_login.gif" width=250/>  |  <img src="media/splash_login.gif" width=250/>  |
+|  <img src="media/squats.gif" width=250/>  |  <img src="media/plank.gif" width=250/>  |  <img src="media/crunch.gif" width=250/>  |
 
 | Running  |
 |---|
-| <img src="media/splash_login.gif" width=250/>  |
+| <img src="media/running.gif" width=250/>  |
