@@ -33,7 +33,6 @@
 |:---|:---|:---|
 |  <img src="media/splash_login.gif" width=250/>  |  <img src="media/register" width=250/>  |  <img src="media/main_all_exercises.gif" width=250/>  |
 
-
 |  My body  |  Image list & image  |  Train progress  |
 |:---|:---|:---|
 |  <img src="media/my_body.gif" width=250/>  |   <img src="media/splash_login.gif" width=250/> | <img src="media/splash_login.gif" width=250/>   |
